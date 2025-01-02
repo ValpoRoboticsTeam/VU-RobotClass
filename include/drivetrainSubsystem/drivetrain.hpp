@@ -149,6 +149,13 @@ class driveTrain{
         /*---------------------------------------------------------------------------*/
 
         /**
+         * @brief
+         * 
+         * @param desiredPos
+         */
+        void drivePD(double desiredPos);
+
+        /**
          * @brief 
          * 
          * @param dir

@@ -211,6 +211,60 @@ void driveTrain::driveArc(int dir, double radius, double theta, double velocity)
 /*-------------------------------PID ALROGITHMS------------------------------*/
 /*---------------------------------------------------------------------------*/
 
+/*-----------------------------DRIVE STRAIGHT PID----------------------------*/
+
+
+void driveTrain::drivePD(double desiredPos){
+    // control variables
+    double kp = 0.35; // controls how fast the program's rise time 
+    double kd = 0.1; // controls how fast the program reacts to approaching the targes
+    double ka = 0.05; // controls how fast the program corrects drift
+
+
+    // status tracking variables
+    double goal = desiredPos/motorConversion;
+    double error; // desirec Value - sensor value
+    double prev_Error = 0; // Error of last loop ran
+    double derivative; // Error - prevError
+    double ang; // angle at which the bot has turned 
+    double LeftAvg;         double RightAvg;        double progress;
+    double AveRSpeed;       double AveLSpeed;
+    double RightMotorSpeed; double LeftMotorSpeed;
+    int errorCount=0;
+
+    resetDrivePositions();
+    sensorControler->resetHeading();
+
+    while(errorCount<3){
+
+        progress = getMotorAve();
+        ang = sensorControler->getRotation();
+
+        error = goal-progress;
+
+        derivative = error - prev_Error;
+        LeftMotorSpeed = (error*kp) + (progress*kd) -(ang*ka);
+        RightMotorSpeed = (error*kp) + (progress*kd) +(ang*ka);
+
+
+        if (LeftMotorSpeed < 1 && LeftMotorSpeed > 0){LeftMotorSpeed=1;}
+        if (LeftMotorSpeed > -1 && LeftMotorSpeed < 0){LeftMotorSpeed=-1;}
+        if (RightMotorSpeed < 1 && RightMotorSpeed > 0){RightMotorSpeed=1;}
+        if (RightMotorSpeed > -1 && RightMotorSpeed < 0){RightMotorSpeed=-1;}
+
+
+        leftSide->spin(forward, LeftMotorSpeed, velocityUnits::pct);
+        rightSide->spin(forward, RightMotorSpeed, velocityUnits::pct);
+
+        prev_Error = error;
+        if(error<5 && error>-5){
+            errorCount++;
+        }
+    }
+    stopDriveTrain(hold);
+}
+/*-------------------------------GYRO TURN PID-------------------------------*/
+
 void driveTrain::pointTurn(int dir, double turnVelocity){
     switch (dir) {
         case 1: // Left turn
@@ -229,14 +283,13 @@ void driveTrain::pointTurn(int dir, double turnVelocity){
 
 void driveTrain::gyroTurn(int dir, double desiredPos){
     double kp = 0.6; // controls how fast the program's rise time 
-    double kd = 0.00; // controls how fast the program reacts to approaching the targes
+    double kd = 0.05; // controls how fast the program reacts to approaching the targes
 
 
     double error; // desirec Value - sensor value
     double prev_Error = 0; // Error of last loop ran
     double derivative; // Error - prevError
     double MotorSpeed;
-
     int errorCount = 0;
 
     resetDrivePositions();
@@ -245,8 +298,6 @@ void driveTrain::gyroTurn(int dir, double desiredPos){
     //initial punch so gyro goes in the correct direction
     pointTurn(dir, 75);
     wait(30, msec);
-
-    int loopcount = 0;
 
     while (errorCount<5){
         // calculate error
@@ -261,21 +312,6 @@ void driveTrain::gyroTurn(int dir, double desiredPos){
         
         if (MotorSpeed < 1 && MotorSpeed > 0){MotorSpeed=1;}
         if (MotorSpeed > -1 && MotorSpeed < 0){MotorSpeed=-1;}
-        
-
-        //Brain.Screen.setCursor(4, 1);
-        //Brain.Screen.print("error: %f", error);
-        //Brain.Screen.newLine();
-        //Brain.Screen.print("heading: %f", sensorControler->getHeading(dir));
-        
-        
-        if (loopcount==0){
-            Brain.Screen.print("heading: %.2f, ", sensorControler->getHeading(dir));
-            Brain.Screen.newLine();
-            Brain.Screen.print("motor speed: %.2f", MotorSpeed);
-            Brain.Screen.newLine();
-        }
-        loopcount++;
         pointTurn(dir, MotorSpeed);
 
         prev_Error = error;
@@ -284,7 +320,6 @@ void driveTrain::gyroTurn(int dir, double desiredPos){
         }
     }
     stopDriveTrain(hold);
-    Brain.Screen.print("done");
 }
 
 /*-------------------------------------------------------------------------------*/
