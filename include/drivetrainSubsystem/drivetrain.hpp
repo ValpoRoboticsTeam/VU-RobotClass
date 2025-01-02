@@ -156,6 +156,13 @@ class driveTrain{
         void drivePD(double desiredPos);
 
         /**
+         * @brief
+         * 
+         * @param desiredPos
+         */
+        void arcPD(double desiredPos, int dir, double radius, double theta);        
+
+        /**
          * @brief 
          * 
          * @param dir

@@ -24,12 +24,12 @@ double wheelDiameter = 4; // in inches
 
 // VEXcode device constructors
 // DriveTrain Set up
-motor FLeft = motor(PORT11, ratio18_1, false);
+motor FLeft = motor(PORT1, ratio18_1, false);
 //motor MidLeft = motor(PORT14, ratio18_1, true);
 motor BLeft = motor(PORT12, ratio18_1, false);
-motor FRight = motor(PORT20, ratio18_1, true);
+motor FRight = motor(PORT8, ratio18_1, true);
 //motor MidRight = motor(PORT11, ratio18_1, false);
-motor BRight = motor(PORT19, ratio18_1, true);
+motor BRight = motor(PORT20, ratio18_1, true);
 
 // DriveTrain Sensors
 inertial gyro1 = inertial(PORT12);

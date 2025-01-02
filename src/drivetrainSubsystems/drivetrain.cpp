@@ -211,6 +211,73 @@ void driveTrain::driveArc(int dir, double radius, double theta, double velocity)
 /*-------------------------------PID ALROGITHMS------------------------------*/
 /*---------------------------------------------------------------------------*/
 
+
+/*--------------------------------DRIVE ARC PID------------------------------*/
+
+void driveTrain::arcPD(double desiredPos, int dir, double radius, double theta){
+    /*
+    // control variables
+    double kp = 0.35; // controls how fast the program's rise time 
+    double kd = 0.1; // controls how fast the program reacts to approaching the targes
+    
+    resetDrivePositions();
+    bool complete = false; double ave; double head; double errorOffset = 4; 
+    
+    double turngoal = theta;
+    
+    double leftspeed; double rightspeed; double leftRadius; double rightRadius;
+    double RightMotorSpeed; double LeftMotorSpeed;
+    int errorCount=0;
+    
+
+
+    double fwdGoal = (theta*radius)/motorConversion;
+    double fwdProgress;
+    double fwdError; // desirec Value - sensor value
+    double prevFwdError = 0; // Error of last loop ran
+    double fwdDerivative; // Error - prevError
+
+    double turnGoal = theta;
+    double turnProgress;
+    double turnError;
+    double prevTurnError;
+    double fwdDerivative;
+
+
+    double LeftAvg;         double RightAvg;        double progress;
+    double AveRSpeed;       double AveLSpeed;
+    double RightMotorSpeed; double LeftMotorSpeed;
+    int errorCount=0;
+
+
+    switch(dir){
+        case 1: // left
+            leftRadius = radius-MotorOffset;
+            rightRadius = radius+MotorOffset;
+            break;
+        case 2: // right
+            leftRadius = radius+MotorOffset;
+            rightRadius = radius-MotorOffset;
+            break;
+        default:
+            leftRadius=1;
+            rightRadius=1;
+            break;
+    }
+
+    while (errorCount<3) {
+
+
+
+        if(true){
+            errorCount++
+        }
+    }
+
+    stopDriveTrain(hold);
+    */
+}
+
 /*-----------------------------DRIVE STRAIGHT PID----------------------------*/
 
 
