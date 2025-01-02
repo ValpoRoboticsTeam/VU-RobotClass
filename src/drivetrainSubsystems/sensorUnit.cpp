@@ -10,16 +10,20 @@
 using namespace vex;
 
 sensorUnit::sensorUnit(
-    inertial* gyroscope,
+    inertial* gyro1,
+    inertial* gyro2,
     rotation* pod1,
     rotation* pod2
 ) {
-    gyro = gyroscope;
+    leftGyro = gyro1;
+    rightGyro = gyro2;
     NSPod = pod1;
     EWPod = pod2;
 
-    gyro->calibrate();
-    gyro->resetHeading();
+    leftGyro->calibrate();
+    rightGyro->calibrate();
+    leftGyro->resetHeading();
+    rightGyro->resetHeading();
 }
 
 sensorUnit::~sensorUnit(){}
@@ -28,25 +32,18 @@ sensorUnit::~sensorUnit(){}
 /* GYRO FUNCTIONS */
 
 double sensorUnit::getHeading(int dir){
-    double heading = 0;
-    switch (dir){
-        case 1: // looking left
-            heading = 360 - gyro->heading();
-            break;
 
-        case 2: // looking right
-            heading = gyro->heading();
-            break;
-            
-        default:
-            break;
-    }
+    double rot1 = leftGyro->rotation();
+    double rot2 = rightGyro->rotation();
+    double rot = (rot1+rot2)/2;
 
-    if (heading > 359){
-        return 0;
-    } else {
-        return heading;
+    double heading = 360+rot;
+
+    while (true){
+        if(heading < 360.00) {break;}
+        heading -= 360;
     }
+    return heading;
 }
 
 double sensorUnit::getPosNS(){

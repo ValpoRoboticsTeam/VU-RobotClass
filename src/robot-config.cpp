@@ -32,11 +32,12 @@ motor FRight = motor(PORT20, ratio18_1, true);
 motor BRight = motor(PORT19, ratio18_1, true);
 
 // DriveTrain Sensors
-inertial gyroscope = inertial(PORT16);
+inertial gyro1 = inertial(PORT12);
+inertial gyro2 = inertial(PORT19);
 rotation nspod = rotation(PORT1);
 rotation ewpod = rotation(PORT1);
 
-sensorUnit* driveSensors = new sensorUnit(&gyroscope, &nspod, &ewpod);
+sensorUnit* driveSensors = new sensorUnit(&gyro1, &gyro2, &nspod, &ewpod);
 
 
 motor IntakeDriver = motor(PORT1, ratio18_1, false);

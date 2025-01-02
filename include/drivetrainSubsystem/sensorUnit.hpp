@@ -14,7 +14,8 @@ using namespace vex;
 class sensorUnit
 {
     private:
-        inertial* gyro;
+        inertial* leftGyro;
+        inertial* rightGyro;
 
         rotation* NSPod;
         rotation* EWPod;
@@ -24,12 +25,14 @@ class sensorUnit
         /**
          * @brief creates a new odomUnit to manage drivetrain sensors
          * 
-         * @param gyroscope the gyroscope for the sensor unit
+         * @param gyro1 the left gyro
+         * @param gyro2 the right gyro
          * @param pod1 The Pod facing North and South
          * @param pod2 The Pod facing East and West
          */
         sensorUnit(
-            inertial* gyroscope,
+            inertial* gyro1,
+            inertial* gyro2,
             rotation* pod1,
             rotation* pod2
         );
@@ -41,7 +44,10 @@ class sensorUnit
         /**
          * @brief resets the gyroscope's heading value to 0.
          */
-        void resetHeading(){gyro->resetHeading();}
+        void resetHeading(){
+            leftGyro->resetHeading();
+            rightGyro->resetHeading();
+        }
 
         /**
          * @brief gets the current heading of the robot
