@@ -22,6 +22,7 @@ sensorUnit::sensorUnit(
 
     leftGyro->calibrate();
     rightGyro->calibrate();
+
     leftGyro->resetHeading();
     rightGyro->resetHeading();
 }
@@ -32,12 +33,8 @@ sensorUnit::~sensorUnit(){}
 /* GYRO FUNCTIONS */
 
 double sensorUnit::getHeading(int dir){
-
-    double rot1 = leftGyro->rotation();
-    double rot2 = rightGyro->rotation();
-    double rot = (rot1+rot2)/2;
-
-    double heading = 360+rot;
+    
+    double heading = 360+getRotation();
 
     while (true){
         if(heading < 360.00) {break;}

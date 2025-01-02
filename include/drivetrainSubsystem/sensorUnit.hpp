@@ -43,7 +43,10 @@ class sensorUnit
         /**
          * @brief 
          */
-        void resetRotation(){gyro->resetRotation();}
+        void resetRotation(){
+            leftGyro->resetRotation();
+            rightGyro->resetRotation();
+            }
 
         /**
          * @brief resets the gyroscope's heading value to 0.
@@ -57,7 +60,9 @@ class sensorUnit
          * @brief 
          */
         double getRotation(){
-            return gyro->rotation();
+            double rot1 = leftGyro->rotation();
+            double rot2 = rightGyro->rotation();
+            return (rot1+rot2)/2;
         }
 
         /**
