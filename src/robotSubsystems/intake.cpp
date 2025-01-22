@@ -10,37 +10,35 @@
 using namespace vex;
 
 intake::intake(
-    motor* DriveMotor,
-    digital_out* ActuatingPiston
+    motor* DriveMotor
+    //digital_out* ActuatingPiston
 ) {
     driver = DriveMotor;
-    actuator = ActuatingPiston;
+    driver->setVelocity(100, velocityUnits::pct);
+    driver->setBrake(hold);
+    //actuator = ActuatingPiston;
 }
 
 intake::~intake(){}
 
 void intake::extend() {
-    actuator->set(true);
+    //actuator->set(true);
 }
 
 void intake::retract() {
-    actuator->set(false);
+    //actuator->set(false);
 }
 
 void intake::setVelocity(double velocity, velocityUnits units) {
     driver->setVelocity(velocity, units);
 }
 
-void intake::runIntake() {
-    driver->spin(fwd);
+void intake::run(directionType dir){
+    driver->spin(dir);
 }
 
-void intake::runReversedIntake() {
-    driver->spin(reverse);
-}
-
-void intake::stopIntake() {
-    driver->stop(hold);    
+void intake::stop() {
+    driver->stop();    
 }
 
 void intake::runConveyor() {

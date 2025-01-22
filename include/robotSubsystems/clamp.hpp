@@ -8,7 +8,6 @@
 /*----------------------------------------------------------------------------*/
 #ifndef CLAMP_HPP
 #define CLAMP_HPP
-
 using namespace vex;
 
 class clamp {

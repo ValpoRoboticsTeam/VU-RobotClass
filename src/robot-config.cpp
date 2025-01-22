@@ -50,8 +50,9 @@ sensorUnit* driveSensors = new sensorUnit(&gyro1, &gyro2, &nspod, &ewpod);
 
 
 motor IntakeDriver = motor(PORT10, ratio18_1, false);
-
 motor  hookDriver = motor(PORT10, ratio18_1, false);
+
+motor armDriver = motor(PORT10, ratio18_1, false);
 
 // Sensors Set up
 aivision aivis = aivision(PORT1, aivision::ALL_AIOBJS);
@@ -60,7 +61,7 @@ vision vis = vision(PORT1, 50, MOGO, SIG_2, SIG_3, SIG_4, SIG_5, SIG_6, SIG_7);
 
 // Pneumatics Set up
 digital_out MogoClamp = digital_out(Brain.ThreeWirePort.A);
-digital_out intakePiston = digital_out(Brain.ThreeWirePort.B);
+//digital_out intakePiston = digital_out(Brain.ThreeWirePort.B);
 
 
 // Management object constructors
@@ -72,10 +73,16 @@ driveTrain* drive = new driveTrain(
   robotLength, gearRatio, wheelDiameter);
 
 clamp* MC = new clamp(&MogoClamp);
-intake* i = new intake(&IntakeDriver, &intakePiston);
+intake* i = new intake(&IntakeDriver 
+                       //&intakePiston
+                       );
+
+conveyor* c = new conveyor(&hookDriver);
+
+arm* lb = new arm(&armDriver);
 
 // Robot Object construction
-Robot robot(drive, MC, i);
+Robot robot(drive, MC, i, c, lb);
 
 /**
  * Used to initialize code/tasks/devices added using tools in VEXcode Pro.

@@ -20,6 +20,8 @@ class Robot {
         driveTrain* driveT;
         clamp* mogoClamp;
         intake* frontIntake;
+        conveyor* hookConveyor;
+        arm* ladyBrown;
         
     public:
 
@@ -33,7 +35,9 @@ class Robot {
         Robot(
             driveTrain* dt,
             clamp* MC,
-            intake* I
+            intake* I,
+            conveyor* C,
+            arm* LB
         );
 
         ~Robot();
@@ -48,7 +52,7 @@ class Robot {
         }
         
         /**
-         * 
+         * @brief
          */
         int drive(double leftNS, double leftEW, double rightNS, double rightEW);
 
@@ -73,8 +77,29 @@ class Robot {
          */
         void runReversedIntake();
 
-        /* Expansion */
+        /**
+         * @brief
+         */
+        void stopIntake();
 
+        /* ladyBrown */
+
+        /**
+         * @brief
+         */
+        void ladybrownForward();
+
+        /**
+         * @brief
+         */
+        void ladybrownBackward();
+
+        /**
+         * @brief
+         */
+        void ladybrownStop();
+
+        /* Expansion */
 
         void autonomous();
 };

@@ -171,18 +171,30 @@ void usercontrol(void) {
     // Each time through the loop your program should update motor + servo
     // values based on feedback from the joysticks.
 
-    if(Controller.ButtonR1.pressing()){ // shift key
+    if(Controller.ButtonA.pressing()){ // shift key
       if(Controller.ButtonUp.pressing()){ // toggles between 
         robot.switchControlMode();
       }
     }
 
-    if(Controller.ButtonR2.pressing()) {
+    if(Controller.ButtonB.pressing()) {
       robot.toggleMogoClamp();
     }
 
     if(Controller.ButtonL1.pressing()){
       robot.runIntake();
+    } else if (Controller.ButtonL2.pressing()) {
+      robot.runReversedIntake();
+    } else {
+      robot.stopIntake();
+    }
+
+    if(Controller.ButtonR1.pressing()){
+      robot.ladybrownForward();
+    } else if (Controller.ButtonR2.pressing()){
+      robot.ladybrownBackward();
+    } else {
+      robot.ladybrownStop();
     }
 
     int scale = 95;

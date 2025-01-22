@@ -25,6 +25,8 @@
 
 #include "robotSubsystems/clamp.hpp"
 #include "robotSubsystems/intake.hpp"
+#include "robotSubsystems/conveyor.hpp"
+#include "robotSubsystems/arm.hpp"
 
 #include "robotSubsystems/robot.hpp"
 

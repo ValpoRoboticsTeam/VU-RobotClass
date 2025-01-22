@@ -1,9 +1,9 @@
 /*----------------------------------------------------------------------------*/
 /*                                                                            */
-/*    Module:       clamp.cpp                                            */
+/*    Module:       clamp.cpp                                                 */
 /*    Author:       Nathan Beals                                              */
-/*    Created:      Mon Dec 2 2024                                         */
-/*    Description:  file for storing MOGO clamp class code            */
+/*    Created:      Mon Dec 2 2024                                            */
+/*    Description:  file for storing MOGO clamp class code                    */
 /*                                                                            */
 /*----------------------------------------------------------------------------*/
 
