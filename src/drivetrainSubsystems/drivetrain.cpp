@@ -390,6 +390,75 @@ void driveTrain::gyroTurn(int dir, double desiredPos){
 }
 
 /*-------------------------------------------------------------------------------*/
+/*-----------------------------Specialty PID Movements---------------------------*/
+/*-------------------------------------------------------------------------------*/
+
+void driveTrain::AIMogoRush(){
+    resetDrivePositions();
+    wait(20, msec);
+
+    int centerFOV = 158;
+    int offsetX = 10;
+
+    double leftSpeed;
+    double rightSpeed;
+
+    double scaleL = 1;
+    double scaleR = 1;
+
+    while (true) {
+
+        aivis.takeSnapshot(aivision::ALL_AIOBJS);
+        aivision::object mogo = aivis.largestObject;
+        /*
+        if (aivis.installed()){
+            aivis.takeSnapshot(aivision::ALL_AIOBJS);
+            aivision::object mogo = aivis.largestObject;
+        } else {
+            vis.takeSnapshot(MOGO);
+            vision::object mogo = vis.largestObject;
+        }
+        */
+        wait(30, msec);
+    
+        double X = mogo.centerX;
+        double Y = mogo.centerY;
+
+        double speed = (-0.000020) *(pow(Y,3)) + 145;
+
+        if (X > (centerFOV - offsetX)) {
+            scaleR = 1;
+            scaleL = 0.56;
+        
+        } else if (X < (centerFOV + offsetX)) {
+            scaleL = 1;
+            scaleR = 0.56;
+        
+        
+        } else {
+            scaleL = scaleL;
+            scaleR = scaleR;
+        }
+
+
+        leftSpeed = speed*scaleL;
+        rightSpeed = speed*scaleR;
+
+
+        leftSide->spin(reverse, leftSpeed, velocityUnits::pct);
+        rightSide->spin(reverse, rightSpeed, velocityUnits::pct);
+
+        wait(30, msec);
+        if ((mogo.centerY > 185) && 
+            (((X < (centerFOV - offsetX)) == false) || 
+              (X > (centerFOV + offsetX)) == false)) {
+            break;
+        }
+    }
+    stopDriveTrain(coast);
+}
+
+/*-------------------------------------------------------------------------------*/
 /*----------------------------Driver Control Movements---------------------------*/
 /*-------------------------------------------------------------------------------*/
 

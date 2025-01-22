@@ -102,14 +102,31 @@ event checkGameElement = event();
 void hasGameElementCallback() {
   Brain.Screen.setFont(mono40);
   Brain.Screen.clearLine(1, black);
+  Brain.Screen.clearLine(2,black);
   Brain.Screen.setCursor(Brain.Screen.row(), 1);
   Brain.Screen.setCursor(1, 1);
 
-  vis.takeSnapshot(aivision::ALL_AIOBJS);
-  if (vis.objectCount > 0) {
+  aivis.takeSnapshot(aivision::ALL_AIOBJS);
+  if (aivis.objectCount > 0) {
     Brain.Screen.print("Game Element Found");
+    Brain.Screen.newLine();
+    Brain.Screen.print(aivis.largestObject.id);
   } else {
     Brain.Screen.print("No Game Element Found");
+  }
+}
+
+void hasMogoCallback() {
+  Brain.Screen.setFont(mono40);
+  Brain.Screen.clearLine(1, black);
+  Brain.Screen.setCursor(Brain.Screen.row(), 1);
+  Brain.Screen.setCursor(1,1);
+
+  aivis.takeSnapshot(aivision::ALL_AIOBJS);
+  if (aivis.largestObject.id == mobileGoal) {
+    Brain.Screen.print("Mogo Found");
+  } else {
+    Brain.Screen.print("NO Mogo Found");
   }
 }
 
@@ -192,6 +209,7 @@ void usercontrol(void) {
 //
 int main() {
   // Set up callbacks for autonomous and driver control periods.
+  
   Competition.autonomous(autonomous);
   Competition.drivercontrol(usercontrol);
 

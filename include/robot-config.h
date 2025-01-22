@@ -7,10 +7,12 @@
 /*                                                                            */
 /*----------------------------------------------------------------------------*/
 using namespace vex;
+using signature = vision::signature;
 
 extern brain Brain;
 extern controller Controller;
 
+extern driveTrain* drive;
 // VEXcode devices
 
 // Drivetrain Setup
@@ -23,7 +25,11 @@ extern controller Controller;
 //extern motor BRight;
 
 //extern inertial gyroscope;
-extern aivision vis;
+
+extern aivision aivis;
+
+extern signature MOGO;
+extern vision vis;
 
 extern Robot robot;
 
