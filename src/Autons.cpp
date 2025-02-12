@@ -16,6 +16,12 @@ void match(){
 
 }
 
+//note 1 tile = 23.56 in
+
 void skills(){
+    driveSensors.resetRotation();
+    drive.resetDrivePositions();
     
+
+
 }

@@ -35,7 +35,6 @@ sensorUnit::~sensorUnit(){}
 double sensorUnit::getHeading(int dir){
     
     double heading = 360+getRotation();
-
     while (true){
         if(heading < 360.00) {break;}
         heading -= 360;

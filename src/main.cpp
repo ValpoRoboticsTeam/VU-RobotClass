@@ -97,39 +97,6 @@ void pre_auton(void) {
   // Example: clearing encoders, setting servo positions, ...
 }
 
-event checkGameElement = event();
-
-void hasGameElementCallback() {
-  Brain.Screen.setFont(mono40);
-  Brain.Screen.clearLine(1, black);
-  Brain.Screen.clearLine(2,black);
-  Brain.Screen.setCursor(Brain.Screen.row(), 1);
-  Brain.Screen.setCursor(1, 1);
-
-  aivis.takeSnapshot(aivision::ALL_AIOBJS);
-  if (aivis.objectCount > 0) {
-    Brain.Screen.print("Game Element Found");
-    Brain.Screen.newLine();
-    Brain.Screen.print(aivis.largestObject.id);
-  } else {
-    Brain.Screen.print("No Game Element Found");
-  }
-}
-
-void hasMogoCallback() {
-  Brain.Screen.setFont(mono40);
-  Brain.Screen.clearLine(1, black);
-  Brain.Screen.setCursor(Brain.Screen.row(), 1);
-  Brain.Screen.setCursor(1,1);
-
-  aivis.takeSnapshot(aivision::ALL_AIOBJS);
-  if (aivis.largestObject.id == mobileGoal) {
-    Brain.Screen.print("Mogo Found");
-  } else {
-    Brain.Screen.print("NO Mogo Found");
-  }
-}
-
 /*---------------------------------------------------------------------------*/
 /*                                                                           */
 /*                              Autonomous Task                              */
@@ -142,9 +109,27 @@ void hasMogoCallback() {
 
 void autonomous(void) {
   // ..........................................................................
-  robot.autonomous();
+  // Insert autonomous user code here.
+
+  /*
+  drive.driveStraight(2, 5, 90);
+  robot.toggleMogoClamp();
+
+  wait(500, msec);
+
+  robot.runIntake();
+  wait(700,msec);
+
+  robot.stopIntake();
+  wait(500, msec);
+
+  drive.gyroTurn(1, 180);
+  wait(500, msec);
+
+  drive.driveStraight(1, 90, 100);
+  */
+  drive.driveStraight(1, 45, 20);
   
-  test();
   // ..........................................................................
 }
 
@@ -158,44 +143,22 @@ void autonomous(void) {
 /*  You must modify the code to add your own robot specific commands here.   */
 /*---------------------------------------------------------------------------*/
 
-void usercontrol(void) {
-  // User control code here, inside the loop
-  checkGameElement(hasGameElementCallback);
+int CD = 25;
 
+void usercontrol(void) {
+  //checkGameElement(hasMogoCallback);
+  //coordinate StakeCoords;
+  //StakeCoords.x=0;
+  //StakeCoords.y=0;
+
+  //wallStake stake1(blueAlliance, 0,0);
+  //wallStake stake2(blueAlliance, StakeCoords);
+
+  int charge = CD;
   double LNS; double LEW;
   double RNS; double REW;
-  while (1) {
+  while(true){
     //checkGameElement.broadcastAndWait();
-
-    // This is the main execution loop for the user control program.
-    // Each time through the loop your program should update motor + servo
-    // values based on feedback from the joysticks.
-
-    if(Controller.ButtonA.pressing()){ // shift key
-      if(Controller.ButtonUp.pressing()){ // toggles between 
-        robot.switchControlMode();
-      }
-    }
-
-    if(Controller.ButtonB.pressing()) {
-      robot.toggleMogoClamp();
-    }
-
-    if(Controller.ButtonL1.pressing()){
-      robot.runIntake();
-    } else if (Controller.ButtonL2.pressing()) {
-      robot.runReversedIntake();
-    } else {
-      robot.stopIntake();
-    }
-
-    if(Controller.ButtonR1.pressing()){
-      robot.ladybrownForward();
-    } else if (Controller.ButtonR2.pressing()){
-      robot.ladybrownBackward();
-    } else {
-      robot.ladybrownStop();
-    }
 
     int scale = 95;
     double multiplier = 100/cbrt(scale);    
@@ -206,14 +169,27 @@ void usercontrol(void) {
 
     robot.drive(LNS,LEW,RNS,REW);
 
-    // ........................................................................
-    // Insert user code here. This is where you use the joystick values to
-    // update your motors, etc.
-    // ........................................................................
+    if(charge> CD){
+      if(Controller.ButtonB.pressing()) {
+        robot.toggleMogoClamp();
+        charge = 0;
+      }
+    }
 
+    if(Controller.ButtonL1.pressing()){
+      robot.runIntake();
+    } else if (Controller.ButtonL2.pressing()) {
+      robot.runReversedIntake();
+    } else {
+      robot.stopIntake();
+    }
+
+    charge++;
     wait(20, msec); // Sleep the task for a short amount of time to
-                    // prevent wasted resources.
-  }
+            // prevent wasted resources.
+    
+    
+  }  
 }
 
 //

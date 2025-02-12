@@ -12,6 +12,8 @@ using namespace vex;
 
 clamp::clamp(digital_out* MC){
     MogoClamp = MC;
+    clampState = false;
+    MogoClamp->set(false);
 }
 
 clamp::~clamp(){}

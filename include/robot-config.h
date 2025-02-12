@@ -12,17 +12,9 @@ using signature = vision::signature;
 extern brain Brain;
 extern controller Controller;
 
-extern driveTrain* drive;
+extern driveTrain drive;
+extern sensorUnit driveSensors;
 // VEXcode devices
-
-// Drivetrain Setup
-//extern motor FLeft;
-//extern motor MidLeft;
-//extern motor BLeft;
-
-//extern motor FRight;
-//extern motor MidRight;
-//extern motor BRight;
 
 //extern inertial gyroscope;
 

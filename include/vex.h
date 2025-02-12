@@ -15,13 +15,12 @@
 #include "v5.h"
 #include "v5_vcs.h"
 
-#include "drivetrainSubsystem/sensorUnit.hpp"
-
-#include "drivetrainSubsystem/wheelSide.hpp"
-#include "drivetrainSubsystem/twoWheelSide.hpp"
-#include "drivetrainSubsystem/threeWheelSide.hpp"
-#include "drivetrainSubsystem/fourWheelSide.hpp"
-#include "drivetrainSubsystem/drivetrain.hpp"
+#include "drivetrainSubsystems/sensorUnit.hpp"
+#include "drivetrainSubsystems/wheelSide.hpp"
+#include "drivetrainSubsystems/twoWheelSide.hpp"
+#include "drivetrainSubsystems/threeWheelSide.hpp"
+#include "drivetrainSubsystems/fourWheelSide.hpp"
+#include "drivetrainSubsystems/drivetrain.hpp"
 
 #include "robotSubsystems/clamp.hpp"
 #include "robotSubsystems/intake.hpp"

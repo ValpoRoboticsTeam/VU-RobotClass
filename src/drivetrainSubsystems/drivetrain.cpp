@@ -9,6 +9,20 @@
 #include "vex.h"
 using namespace vex;
 
+driveTrain::driveTrain(){
+    sensorControler = nullptr;
+
+    MotorOffset = 0;
+    gearRatio = 0;
+    wheelCircumference = 0;
+
+    motorConversion = gearRatio*(wheelCircumference)/(360);
+
+    leftSide = nullptr;
+    rightSide = nullptr;    
+
+}
+
 driveTrain::driveTrain(
         motor* FrontLeft,   motor* FrontRight,
         motor* BackLeft,    motor* BackRight,
@@ -44,7 +58,8 @@ driveTrain::driveTrain(
     gearRatio = gearratio;
     wheelCircumference = wheelDiameter*M_PI;
 
-    motorConversion = gearRatio*(wheelCircumference)*(360);
+    motorConversion = gearRatio*(wheelCircumference)/(360);
+
 
     leftSide = new threeWheelSide(FrontLeft, MiddleLeft, BackLeft, gearratio, wheelDiameter);
     rightSide = new threeWheelSide(FrontRight, MiddleRight, BackRight, gearratio, wheelDiameter);    
@@ -142,7 +157,7 @@ void driveTrain::driveStraight(int dir, double desiredPos, double velocity){
     resetDrivePositions();
     bool complete = false; double ave; double errorOffset = 5; 
     double goal = desiredPos/motorConversion;
-
+    
     while(!complete){
         switch (dir){
         case 1: // forward movement
@@ -160,6 +175,7 @@ void driveTrain::driveStraight(int dir, double desiredPos, double velocity){
         }
         ave = getMotorAve();
         if (goal-errorOffset < ave && goal+errorOffset > ave ){
+                
                 complete = true;
         }
     }
@@ -294,8 +310,7 @@ void driveTrain::drivePD(double desiredPos){
     double prev_Error = 0; // Error of last loop ran
     double derivative; // Error - prevError
     double ang; // angle at which the bot has turned 
-    double LeftAvg;         double RightAvg;        double progress;
-    double AveRSpeed;       double AveLSpeed;
+    double progress;
     double RightMotorSpeed; double LeftMotorSpeed;
     int errorCount=0;
 
@@ -360,15 +375,15 @@ void driveTrain::gyroTurn(int dir, double desiredPos){
     int errorCount = 0;
 
     resetDrivePositions();
-    sensorControler->resetHeading();
+    sensorControler->resetRotation();
 
     //initial punch so gyro goes in the correct direction
-    pointTurn(dir, 75);
-    wait(30, msec);
+    //pointTurn(dir, 75);
+    //wait(30, msec);
 
     while (errorCount<5){
         // calculate error
-        error = desiredPos - sensorControler->getHeading(dir);
+        error = desiredPos - abs(sensorControler->getRotation());
 
         // calculate derivative
         derivative = error - prev_Error;
@@ -393,12 +408,51 @@ void driveTrain::gyroTurn(int dir, double desiredPos){
 /*-----------------------------Specialty PID Movements---------------------------*/
 /*-------------------------------------------------------------------------------*/
 
-void driveTrain::AIMogoRush(){
+aivision::object* findMogo() {
+  for (int i = 1; i <= aivis.objectCount; i++) {
+    if (aivis.objects[i].id == mobileGoal) {
+        return &aivis.objects[i];
+    }
+  }
+  return nullptr;
+}
+
+bool hasMogo() {
+  if (aivis.installed()){
+    for (int i = 1; i <= aivis.objectCount; i++) {
+        if (aivis.objects[i].id == mobileGoal) {
+            return true;
+        }
+    }
+    return false;    
+  } else {
+    return (vis.objectCount > 0);
+  }
+
+}
+
+void driveTrain::MogoRush() {
     resetDrivePositions();
     wait(20, msec);
 
-    int centerFOV = 158;
-    int offsetX = 10;
+    int errorcount = 0;
+
+    double YMAX;
+    double XMAX;
+
+    if (aivis.installed()){
+        YMAX = 240; // max dimensions for ai vision sensor
+        XMAX = 320;
+    } else {
+        YMAX = 212; // max dimensions for older vision sensor
+        XMAX = 316;
+    }
+
+
+    double Ytarget = YMAX/2; // center Y FOV
+    double centerFOV = XMAX/2; // center X FOV
+    
+    int offsetX = XMAX*0.1; // 10% of max FOV
 
     double leftSpeed;
     double rightSpeed;
@@ -406,56 +460,70 @@ void driveTrain::AIMogoRush(){
     double scaleL = 1;
     double scaleR = 1;
 
-    while (true) {
 
-        aivis.takeSnapshot(aivision::ALL_AIOBJS);
-        aivision::object mogo = aivis.largestObject;
-        /*
-        if (aivis.installed()){
+    while (errorcount<3){
+        if (aivis.installed()) { // take snapshot for ai vision sensor
             aivis.takeSnapshot(aivision::ALL_AIOBJS);
-            aivision::object mogo = aivis.largestObject;
         } else {
-            vis.takeSnapshot(MOGO);
-            vision::object mogo = vis.largestObject;
-        }
-        */
-        wait(30, msec);
-    
-        double X = mogo.centerX;
-        double Y = mogo.centerY;
-
-        double speed = (-0.000020) *(pow(Y,3)) + 145;
-
-        if (X > (centerFOV - offsetX)) {
-            scaleR = 1;
-            scaleL = 0.56;
-        
-        } else if (X < (centerFOV + offsetX)) {
-            scaleL = 1;
-            scaleR = 0.56;
-        
-        
-        } else {
-            scaleL = scaleL;
-            scaleR = scaleR;
+            vis.takeSnapshot(MOGO); // take snapshot for older vision sensor
         }
 
+        if (vis.objectCount > 0){
 
-        leftSpeed = speed*scaleL;
-        rightSpeed = speed*scaleR;
+            double X; double Y;
+            if (aivis.installed()) { //mogo coordinates for ai vision sensor
+                aivision::object* mogo = findMogo();
+                X = mogo->centerX; 
+                Y = mogo->centerY;
+            } else { //mogo coordinates for older vision sensor
+                X = vis.largestObject.centerX;
+                Y = vis.largestObject.centerY;
+            }
 
+            Brain.Screen.clearScreen();
+            Brain.Screen.setCursor(1,1);
+            Brain.Screen.print("Mogo coors:");
+            Brain.Screen.newLine();
+            Brain.Screen.print("x: ");
+            Brain.Screen.print(X);
+            Brain.Screen.newLine();
+            Brain.Screen.print("y: ");
+            Brain.Screen.print(Y);
 
-        leftSide->spin(reverse, leftSpeed, velocityUnits::pct);
-        rightSide->spin(reverse, rightSpeed, velocityUnits::pct);
+            double speed = (Ytarget-Y)*(100/Ytarget);
 
-        wait(30, msec);
-        if ((mogo.centerY > 185) && 
-            (((X < (centerFOV - offsetX)) == false) || 
-              (X > (centerFOV + offsetX)) == false)) {
-            break;
+            if (X < (centerFOV - offsetX)) { //drift to the left
+                double drift = (centerFOV - X)/XMAX;
+                scaleR = 1;
+                scaleL = 1 - drift;
+
+            
+            } else if (X > (centerFOV + offsetX)) { // drift to the right
+                double drift = (X - centerFOV)/XMAX;
+                scaleR = 1;
+                scaleL = 1 - drift;
+            
+            } 
+
+            leftSpeed = speed*scaleL;
+            rightSpeed = speed*scaleR;
+
+            leftSide->spin(fwd, leftSpeed, velocityUnits::pct);
+            rightSide->spin(fwd, rightSpeed, velocityUnits::pct);
+            wait(30, msec);
+
+            if ((Y > Ytarget) && 
+                ((X >= (centerFOV - offsetX)) || 
+                (X <= (centerFOV + offsetX)))) {
+                errorcount++;
+            }
+
+        } else {
+            pointTurn(1, 20);
+            wait(30, msec);
         }
     }
-    stopDriveTrain(coast);
+    stopDriveTrain(hold);
 }
 
 /*-------------------------------------------------------------------------------*/
@@ -475,7 +543,7 @@ int driveTrain::drive(double leftNS, double leftEW, double rightNS, double right
         stopDriveTrain(hold);
         return 1;
 
-    } else{ //if all joystick values are within the deadzone
+    } else{ //if all joystick values are outside the deadzone
         if(getControlMode() == tankDrive){
             leftPower = leftNS + leftEW;
             rightPower = rightNS - rightEW;
@@ -483,10 +551,11 @@ int driveTrain::drive(double leftNS, double leftEW, double rightNS, double right
             leftPower = leftNS + rightEW*0.70;
             rightPower = leftNS - rightEW*0.70;
         }
+
+        leftSide->spin(fwd, leftPower, velocityUnits::pct);
+        rightSide->spin(fwd, rightPower, velocityUnits::pct);
     }
 
-    leftSide->spin(fwd, leftPower, velocityUnits::pct);
-    rightSide->spin(fwd, rightPower, velocityUnits::pct);
 
     //Brain.Screen.clearLine();
     //Brain.Screen.print("North South Odom Pod value: ");
