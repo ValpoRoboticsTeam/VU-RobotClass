@@ -408,11 +408,26 @@ int driveTrain::drive(double leftNS, double leftEW, double rightNS, double right
 
     } else{ //if all joystick values are within the deadzone
         if(getControlMode() == tankDrive){
-            leftPower = leftNS + leftEW;
-            rightPower = rightNS - rightEW;
+
+            if(((leftNS - rightNS) < 10) && ((leftNS - rightNS) > -10)) {
+                double dif = (leftSide->getMotorVelocity() - rightSide->getMotorVelocity())*0.5;
+
+                leftPower = (leftNS + leftEW) + dif;
+                rightPower = (rightNS - rightEW) - dif;
+            } else {
+                leftPower = leftNS + leftEW;
+                rightPower = rightNS - rightEW;
+            }
         } else if(getControlMode() == arcadeDrive) { 
-            leftPower = leftNS + rightEW*0.70;
-            rightPower = leftNS - rightEW*0.70;
+            if (withinDeadzone(leftEW) && withinDeadzone(rightEW)) {
+                double dif = (leftSide->getMotorVelocity() - rightSide->getMotorVelocity())*0.5;
+
+                leftPower = leftNS + dif;
+                rightPower = leftNS - dif;
+            } else {
+                leftPower = leftNS + rightEW*0.70;
+                rightPower = leftNS - rightEW*0.70;
+            }
         }
     }
 

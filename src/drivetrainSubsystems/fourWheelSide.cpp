@@ -78,6 +78,15 @@ double fourWheelSide::getMotorWattage(){
     return ave/getNumOfWheels();
 }
 
+double fourWheelSide::getMotorVelocity(){
+    double ave = 0;
+    ave += front->velocity(velocityUnits::pct);
+    ave += fmiddle->velocity(velocityUnits::pct);
+    ave += bmiddle->velocity(velocityUnits::pct);
+    ave += back->velocity(velocityUnits::pct);
+    return ave/getNumOfWheels();
+}
+
 /*---------------------------------------------------------------------------*/
 /*----------------------------DriveSide Movements----------------------------*/
 /*---------------------------------------------------------------------------*/

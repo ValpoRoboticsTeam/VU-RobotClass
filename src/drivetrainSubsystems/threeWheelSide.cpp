@@ -70,6 +70,14 @@ double threeWheelSide::getMotorWattage(){
     return ave/getNumOfWheels();
 }
 
+double threeWheelSide::getMotorVelocity(){
+    double ave = 0;
+    ave += front->velocity(velocityUnits::pct);
+    ave += middle->velocity(velocityUnits::pct);
+    ave += back->velocity(velocityUnits::pct);
+    return ave/getNumOfWheels();
+}
+
 /*---------------------------------------------------------------------------*/
 /*----------------------------DriveSide Movements----------------------------*/
 /*---------------------------------------------------------------------------*/

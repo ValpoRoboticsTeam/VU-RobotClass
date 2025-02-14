@@ -50,6 +50,7 @@ class fourWheelSide: public wheelSide{
         void stopDriveSide(brakeType Brake);
         void setVelocity(double velocity, velocityUnits units);
         double getMotorWattage();
+        double getMotorVelocity();
 
         /*---------------------------------------------------------------------------*/
         /*----------------------------DriveSide Movements----------------------------*/

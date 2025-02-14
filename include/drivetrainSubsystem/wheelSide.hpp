@@ -50,6 +50,11 @@ class wheelSide {
         */
         virtual double getMotorWattage() = 0;
 
+        /**
+         * @brief gets the average Velocity of all motors
+         */
+        virtual double getMotorVelocity() = 0;
+
         /*---------------------------------------------------------------------------*/
         /*----------------------------DriveSide Movements----------------------------*/
         /*---------------------------------------------------------------------------*/
