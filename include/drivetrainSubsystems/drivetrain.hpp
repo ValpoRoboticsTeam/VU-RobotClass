@@ -23,7 +23,7 @@ class driveTrain{
         double gearRatio;
         double wheelCircumference;
         double motorConversion;
-        double deadzone = 0;
+        double deadzone = 5;
 
         // Classifications for User Control Modes
         enum UserControlMode {
@@ -55,7 +55,9 @@ class driveTrain{
 
 
     public:
-        
+
+        driveTrain();
+
         /**
          * @brief
          * 
@@ -205,8 +207,14 @@ class driveTrain{
         
 
 
-        
-        
+        /*-------------------------------------------------------------------------------*/
+        /*-----------------------------Specialty PID Movements---------------------------*/
+        /*-------------------------------------------------------------------------------*/
+
+        /**
+         * 
+         */
+        void MogoRush();
         
         /*-------------------------------------------------------------------------------*/
         /*----------------------------Driver Control Movements---------------------------*/
@@ -229,5 +237,9 @@ class driveTrain{
         int drive(double leftNS, double leftEW, double rightNS, double rightEW);
 
 };
+
+aivision::object* findMogo();
+
+bool hasMogo();
 
 #endif

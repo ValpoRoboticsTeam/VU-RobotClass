@@ -1,11 +1,3 @@
-/*----------------------------------------------------------------------------*/
-/*                                                                            */
-/*    Module:       robot.hpp                                                 */
-/*    Author:       Nathan Beals                                              */
-/*    Created:      Sun March 17 2024                                         */
-/*    Description:  file for storing robot class declerations                 */
-/*                                                                            */
-/*----------------------------------------------------------------------------*/
 
 #ifndef ROBOT_HPP
 #define ROBOT_HPP
@@ -16,28 +8,35 @@ using namespace vex;
 class Robot {
     private:
         coordinate coords;
-        
+
         driveTrain* driveT;
         clamp* mogoClamp;
         intake* frontIntake;
-        
+        conveyor* hookConveyor;
     public:
-
         /**
          * @brief creates a robot object to monitor, manage, and control the robots' systems
          * 
          * @param dt the drive train controller
-         * @param MC the mogo clamp controller
-         * @param I the intake system controller 
          */
         Robot(
             driveTrain* dt,
             clamp* MC,
-            intake* I
+            intake* frontIntake,
+            conveyor* C
         );
+        
+        Robot();
 
         ~Robot();
 
+        void setDriveTrain(driveTrain* DT) {
+            driveT = DT;
+        }
+
+        driveTrain* getDrive() {return driveT;}
+
+    
         /* Drive Controlls */
 
         /**
@@ -48,22 +47,17 @@ class Robot {
         }
         
         /**
-         * 
+         * @brief
          */
         int drive(double leftNS, double leftEW, double rightNS, double rightEW);
 
-        /* Subsystem Controlls */
-
-        /* MOGO Clamp */
 
         /**
          * @brief
          */
         void toggleMogoClamp();
 
-        /* Intake Commands */
-
-        /**
+                /**
          * @brief
          */
         void runIntake();
@@ -73,10 +67,11 @@ class Robot {
          */
         void runReversedIntake();
 
-        /* Expansion */
+        /**
+         * @brief
+         */
+        void stopIntake();
 
-
-        void autonomous();
 };
 
 #endif

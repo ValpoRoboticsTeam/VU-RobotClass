@@ -40,6 +40,7 @@ class sensorUnit
         ~sensorUnit();
 
         /* GYRO FUNCTIONS */
+        
         /**
          * @brief 
          */

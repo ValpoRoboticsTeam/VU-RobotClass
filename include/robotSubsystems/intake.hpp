@@ -14,7 +14,7 @@ class intake {
     private:
         //front intake
         motor* driver;
-        digital_out* actuator;
+        //digital_out* actuator;
 
         //motor* ringConveyorBelt;
     public:
@@ -26,8 +26,8 @@ class intake {
          * @param ActuatingPiston the pneumatic system actuating the intake in and out.
          */
         intake(
-            motor* DriveMotor,
-            digital_out* ActuatingPiston
+            motor* DriveMotor
+            //digital_out* ActuatingPiston
         );
         ~intake();
 
@@ -49,18 +49,12 @@ class intake {
         /**
          * @brief
          */
-        void runIntake();
-        
-        
-        /**
-         * @brief
-         */
-        void runReversedIntake();
+        void run(directionType dir);
         
         /**
          * @brief
          */
-        void stopIntake();
+        void stop();
 
         /**
          * @brief

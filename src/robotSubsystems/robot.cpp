@@ -1,20 +1,30 @@
 #include "vex.h"
 using namespace vex;
 
+Robot::Robot(){
+    coords.x=0;
+    coords.y=0;
+    driveT = nullptr;
+    mogoClamp = nullptr;
+    frontIntake = nullptr;
+    hookConveyor = nullptr;
+}
+
 Robot::Robot(
     driveTrain *dt,
     clamp* MC,
-    intake* I
+    intake* I,
+    conveyor* C
 ) {
     coords.x=0;
     coords.y=0;
     driveT = dt;
-    mogoClamp = MC;    
+    mogoClamp = MC;
+    frontIntake = I;
+    hookConveyor = C;
 }
 
 Robot::~Robot(){}
-
-/* Drive Controlls */
 
 int Robot::drive(double leftNS, double leftEW, double rightNS, double rightEW) {
     return driveT->drive(leftNS, leftEW, rightNS, rightEW);
@@ -28,23 +38,17 @@ void Robot::toggleMogoClamp() {
     mogoClamp->toggle();
 }
 
-/* Intake Commands */
-
 void Robot::runIntake() {
-    frontIntake->runIntake();
+    frontIntake->run(fwd);
+    hookConveyor->run(fwd);
 }
 
 void Robot::runReversedIntake() {
-    frontIntake->runReversedIntake();
+    frontIntake->run(reverse);
+    hookConveyor->run(reverse);
 }
-/* Expansion */
 
-void Robot::autonomous(){
-    //testing autonomous drive functions
-    driveT->driveStraight(1, 5, 15);      //test successful
-    //driveT->pointTurn(2,90,15);           test successful
-    //driveT->sidePivot(1,90,15);           test successful
-    driveT->driveArc(1, 27, 90, 15);      //test successful
-    //driveT->gyroTurn(1, 90);              test successful
-    //driveT->drivePD(35);                  test successful
+void Robot::stopIntake() {
+    frontIntake->stop();
+    hookConveyor->stop();
 }
