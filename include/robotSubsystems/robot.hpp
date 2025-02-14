@@ -72,6 +72,11 @@ class Robot {
          */
         void stopIntake();
 
+        /**
+         * @brief
+         */
+        void loadRing();
+
 };
 
 #endif

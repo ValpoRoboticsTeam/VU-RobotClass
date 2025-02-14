@@ -17,6 +17,7 @@ extern sensorUnit driveSensors;
 // VEXcode devices
 
 //extern inertial gyroscope;
+extern digital_in linetracker;
 
 extern aivision aivis;
 

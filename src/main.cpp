@@ -49,6 +49,12 @@ allianceColor matchColor;
 /*  not every time that the robot is disabled.                               */
 /*---------------------------------------------------------------------------*/
 
+void linetrackerCallback(void) {
+  robot.loadRing();
+  Brain.Screen.print("Line switch Triggered");
+  Brain.Screen.newLine();
+}
+
 void setprogram(void) {  
   bool pressed = false;
   
@@ -88,6 +94,9 @@ void pre_auton(void) {
   // Initializing Robot Configuration. DO NOT REMOVE!
   vexcodeInit();
   //setprogram();
+  //robot.loadRing();
+
+  linetracker.low(linetrackerCallback);
 
   if(Brain.SDcard.isInserted()){
     Brain.Screen.drawImageFromFile("Logo2.png",0,0);
@@ -128,7 +137,13 @@ void autonomous(void) {
 
   drive.driveStraight(1, 90, 100);
   */
-  drive.driveStraight(1, 45, 20);
+  //drive.driveStraight(1, 45, 20);
+
+  robot.toggleMogoClamp();
+  robot.loadRing();
+  
+
+  //linetracker.low(linetrackerCallback);
   
   // ..........................................................................
 }
@@ -167,7 +182,7 @@ void usercontrol(void) {
     RNS = cbrt(Controller.Axis2.position())*multiplier;
     REW = cbrt(Controller.Axis1.position())*multiplier;    
 
-    robot.drive(LNS,LEW,RNS,REW);
+    //robot.drive(LNS,LEW,RNS,REW);
 
     if(charge> CD){
       if(Controller.ButtonB.pressing()) {

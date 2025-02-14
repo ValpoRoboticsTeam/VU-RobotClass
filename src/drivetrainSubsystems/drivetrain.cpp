@@ -83,9 +83,6 @@ driveTrain::driveTrain(
 
     motorConversion = gearRatio*(wheelCircumference)/(360);
 
-    Brain.Screen.print("%f * %f / 360 = %f ", gearRatio, wheelCircumference, motorConversion );
-    Brain.Screen.newLine();
-
     leftSide = new fourWheelSide(FrontLeft, FrontMiddleLeft, BackMiddleLeft, BackLeft, gearratio, wheelDiameter);
     rightSide = new fourWheelSide(FrontRight, FrontMiddleRight, BackMiddleRight, BackRight, gearratio, wheelDiameter);    
 }

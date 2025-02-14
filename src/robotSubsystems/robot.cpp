@@ -52,3 +52,7 @@ void Robot::stopIntake() {
     frontIntake->stop();
     hookConveyor->stop();
 }
+
+void Robot::loadRing() {
+    hookConveyor->loadRing();
+}
