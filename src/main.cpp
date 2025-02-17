@@ -176,13 +176,12 @@ void usercontrol(void) {
       }
     }
 
+    int speedLimit = 85;
+    if (Controller.Axis3.position() > speedLimit){LNS = speedLimit;}else{LNS = Controller.Axis3.position();}
+    if (Controller.Axis4.position() > speedLimit){LEW = speedLimit;}else{LEW = Controller.Axis4.position();}
+    if (Controller.Axis2.position() > speedLimit){RNS = speedLimit;}else{RNS = Controller.Axis2.position();}
+    if (Controller.Axis1.position() > speedLimit){REW = speedLimit;}else{REW = Controller.Axis1.position();}
     
-    if (Controller.Axis3.position() > 90){LNS = 90;}else{LNS = Controller.Axis3.position();}
-    if (Controller.Axis4.position() > 90){LEW = 90;}else{LEW = Controller.Axis4.position();}
-    if (Controller.Axis2.position() > 90){RNS = 90;}else{RNS = Controller.Axis2.position();}
-    if (Controller.Axis1.position() > 90){REW = 90;}else{REW = Controller.Axis1.position();}
-    
-
     //LNS = cbrt(LNS)*multiplier;
     //LEW = cbrt(LEW)*multiplier;
     //RNS = cbrt(RNS)*multiplier;

@@ -14,7 +14,6 @@ using namespace vex;
 
 class driveTrain{
     private:
-        sensorUnit* sensorControler;
 
         wheelSide* leftSide;
         wheelSide* rightSide;
@@ -58,6 +57,7 @@ class driveTrain{
 
 
     public:
+        sensorUnit* sensors;
 
         driveTrain();
 
@@ -146,7 +146,7 @@ class driveTrain{
          * @param dir specifies whether the robot is looking left or right
          */
         double getHeading(int dir){
-            return sensorControler->getHeading(dir);
+            return sensors->getHeading(dir);
         }
 
         /*---------------------------------------------------------------------------*/

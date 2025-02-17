@@ -10,7 +10,7 @@
 using namespace vex;
 
 driveTrain::driveTrain(){
-    sensorControler = nullptr;
+    sensors = nullptr;
 
     MotorOffset = 0;
     gearRatio = 0;
@@ -31,7 +31,7 @@ driveTrain::driveTrain(
         double gearratio,
         double wheelDiameter
 ) {
-    sensorControler = senosrs;
+    sensors = senosrs;
 
     MotorOffset = robotlength/2;
     gearRatio = gearratio;
@@ -52,7 +52,7 @@ driveTrain::driveTrain(
         double gearratio,
         double wheelDiameter
 ) {
-    sensorControler = senosrs;
+    sensors = senosrs;
 
     MotorOffset = robotlength/2;
     gearRatio = gearratio;
@@ -75,7 +75,7 @@ driveTrain::driveTrain(
         double gearratio,
         double wheelDiameter
 ) {
-    sensorControler = senosrs;
+    sensors = senosrs;
 
     MotorOffset = robotlength/2;
     gearRatio = gearratio;
@@ -122,7 +122,7 @@ void driveTrain::setVelocities(double velocity, velocityUnits units){
 
 void driveTrain::sidePivot(int dir, double theta, double velocity){
     resetDrivePositions();
-    bool complete = false; sensorControler->resetHeading(); double errorOffset=4;
+    bool complete = false; sensors->resetHeading(); double errorOffset=4;
     double ave; double head; double goal = theta*MotorOffset/motorConversion;
     
     while (!complete){
@@ -154,15 +154,19 @@ void driveTrain::driveStraight(int dir, double desiredPos, double velocity){
     resetDrivePositions();
     bool complete = false; double ave; double errorOffset = 5; 
     double goal = desiredPos/motorConversion;
+
+    double dif;
+    double leftPower;
+    double rightPower;
     
     while(!complete){
         switch (dir){
         case 1: // forward movement
 
-            double dif = (leftSide->getMotorVelocity() - rightSide->getMotorVelocity())*3;
+            dif = (leftSide->getMotorVelocity() - rightSide->getMotorVelocity())*3;
 
-            double leftPower = velocity + dif;
-            double rightPower = velocity - dif;
+            leftPower = velocity + dif;
+            rightPower = velocity - dif;
 
             leftSide->spin(forward, leftPower, velocityUnits::pct);
             rightSide->spin(forward, rightPower, velocityUnits::pct);
@@ -170,10 +174,10 @@ void driveTrain::driveStraight(int dir, double desiredPos, double velocity){
             break;
         case 2:
 
-            double dif = (leftSide->getMotorVelocity() - rightSide->getMotorVelocity())*3;
+            dif = (leftSide->getMotorVelocity() - rightSide->getMotorVelocity())*3;
 
-            double leftPower = velocity + dif;
-            double rightPower = velocity - dif;
+            leftPower = velocity + dif;
+            rightPower = velocity - dif;
 
 
             leftSide->spin(reverse, leftPower, velocityUnits::pct);
@@ -326,12 +330,12 @@ void driveTrain::drivePD(double desiredPos){
     int errorCount=0;
 
     resetDrivePositions();
-    sensorControler->resetHeading();
+    sensors->resetHeading();
 
     while(errorCount<3){
 
         progress = getMotorAve();
-        ang = sensorControler->getRotation();
+        ang = sensors->getRotation();
 
         error = goal-progress;
 
@@ -386,7 +390,7 @@ void driveTrain::gyroTurn(int dir, double desiredPos){
     int errorCount = 0;
 
     resetDrivePositions();
-    sensorControler->resetRotation();
+    sensors->resetRotation();
 
     //initial punch so gyro goes in the correct direction
     //pointTurn(dir, 75);
@@ -394,7 +398,7 @@ void driveTrain::gyroTurn(int dir, double desiredPos){
 
     while (errorCount<5){
         // calculate error
-        error = desiredPos - abs(sensorControler->getRotation());
+        error = desiredPos - abs(sensors->getRotation());
 
         // calculate derivative
         derivative = error - prev_Error;
@@ -537,7 +541,7 @@ int driveTrain::drive(double leftNS, double leftEW, double rightNS, double right
     } else{ //if all joystick values are outside the deadzone
         if(getControlMode() == tankDrive){
             if(((leftNS - rightNS) < 10) && ((leftNS - rightNS) > -10)) {
-                double dif = (leftSide->getMotorVelocity() - rightSide->getMotorVelocity())*2;
+                double dif = (leftSide->getMotorVelocity() - rightSide->getMotorVelocity());
 
                 leftPower = (leftNS + leftEW) + dif;
                 rightPower = (rightNS - rightEW) - dif;
@@ -548,10 +552,40 @@ int driveTrain::drive(double leftNS, double leftEW, double rightNS, double right
         } else if(getControlMode() == arcadeDrive) { 
             if (withinDeadzone(leftEW) && withinDeadzone(rightEW)) {
                 resetDrivePositions();
-                double dif = (leftSide->getMotorVelocity() - rightSide->getMotorVelocity())*3;
+                double dif = (leftSide->getMotorVelocity() - rightSide->getMotorVelocity());
 
-                leftPower = leftNS;
-                rightPower = leftNS - dif;
+
+                Brain.Screen.print(dif);
+                Brain.Screen.newLine();
+                
+
+                if(leftNS >=0) {
+                    leftPower = leftNS - dif;
+                    rightPower = leftNS + dif;
+
+                    double max = 100;
+                    if (leftPower > max){max = leftPower;}
+                    if (rightPower > max){max = rightPower;}
+
+                    if(max > 100){
+                        leftPower = leftPower/max*100;
+                        rightPower = rightPower/max*100;
+                    }
+                    
+                } else {
+                    leftPower = leftNS + dif;
+                    rightPower = leftNS - dif;
+
+                    double max = -100;
+                    if (leftPower < max){max = leftPower;}
+                    if (rightPower < max){max = rightPower;}
+
+                    if(max < -100){
+                        leftPower = leftPower/max*-100;
+                        rightPower = rightPower/max*-100;
+                    }
+                }
+                
             } else {
                 leftPower = leftNS + rightEW;
                 rightPower = leftNS - rightEW;
@@ -567,11 +601,6 @@ int driveTrain::drive(double leftNS, double leftEW, double rightNS, double right
         leftSide->spin(fwd, leftPower, velocityUnits::pct);
         rightSide->spin(fwd, rightPower, velocityUnits::pct);
     }
-
-
-    //Brain.Screen.clearLine();
-    //Brain.Screen.print("North South Odom Pod value: ");
-    //Brain.Screen.print(sensorControler->getPosNS());
 
     return 1;
 }

@@ -18,16 +18,23 @@ extern double tileLength; //inches
 void test();
 
 /**
- * @brief void containing autonomous match code
+ * @brief void containing autonomous match code for the 24" robot
 */
-void match();
-
 void match24();
+
 /**
- * @brief void containing autonomous skills code
+ * @brief void containing autonomous match code for the 15" robot
+*/
+void match15();
+
+/**
+ * @brief void containing autonomous skills code for the 24" robot
 */
 void skills24();
 
+/**
+ * @brief void containing autonomous skills code for the 15" robot
+*/
 void skills15();
 
 #endif
