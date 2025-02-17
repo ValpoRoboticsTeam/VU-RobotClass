@@ -48,6 +48,19 @@ driveTrain drive(
   &driveSensors, 
   robotLength, gearRatio, wheelDiameter);
 
+  digital_out MogoClamp = digital_out(Brain.ThreeWirePort.H);
+  clamp* MC = new clamp(&MogoClamp);
+  
+  
+  motor IntakeDriver = motor(PORT1, ratio18_1, true);
+  intake* i = new intake(&IntakeDriver 
+                         //&intakePiston
+                         );
+
+  motor hookDriver = motor(PORT2, ratio18_1, true);
+  conveyor* c = new conveyor(&hookDriver);
+  
+
 
 // 15" 
 /*
@@ -56,13 +69,13 @@ double gearRatio = 36.0/60.0;
 double wheelDiameter = 3.25; // in inches
 
 
-motor FLeft = motor(PORT19, ratio18_1, true);
-motor MLeft = motor(PORT21, ratio18_1, false);
-motor BLeft = motor(PORT20, ratio18_1, true);
+motor FLeft = motor(PORT1, ratio18_1, true);
+motor MLeft = motor(PORT16, ratio18_1, true);
+motor BLeft = motor(PORT7, ratio18_1, false);
 
-motor FRight = motor(PORT13, ratio18_1, false);
-motor MRight = motor(PORT4, ratio18_1, true);
-motor BRight = motor(PORT17, ratio18_1, false);
+motor FRight = motor(PORT10, ratio18_1, false);
+motor MRight = motor(PORT11, ratio18_1, true);
+motor BRight = motor(PORT15, ratio18_1, true);
 
 // DriveTrain Sensors
 inertial gyro1 = inertial(PORT5);
@@ -78,22 +91,21 @@ driveTrain drive(
   &driveSensors, 
   robotLength, gearRatio, wheelDiameter);
 
-*/
-
-digital_in linetracker = digital_in(Brain.ThreeWirePort.G);
 
 digital_out MogoClamp = digital_out(Brain.ThreeWirePort.H);
 clamp* MC = new clamp(&MogoClamp);
 
 
-motor IntakeDriver = motor(PORT1, ratio18_1, true);
+motor IntakeDriver = motor(PORT21, ratio18_1, true);
 intake* i = new intake(&IntakeDriver 
                        //&intakePiston
                        );
 
-motor hookDriver = motor(PORT2, ratio18_1, true);
+motor hookDriver = motor(PORT, ratio18_1, true);
 conveyor* c = new conveyor(&hookDriver);
+*/
 
+digital_in linetracker = digital_in(Brain.ThreeWirePort.G);
 
 // Robot Object construction
 Robot robot(&drive, MC, i, c);
@@ -108,7 +120,7 @@ signature MOGO = signature(1, -2617, -885, -1751,-5673, -2891, -4282, 2.5, 0 );
 
 // Vision Sensors Set up
 aivision aivis = aivision(PORT3, aivision::ALL_AIOBJS);
-vision vis = vision(PORT2, 20, MOGO);
+vision vis = vision(PORT4, 20, MOGO);
 
 
 

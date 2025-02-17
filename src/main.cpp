@@ -50,7 +50,7 @@ allianceColor matchColor;
 /*---------------------------------------------------------------------------*/
 
 void linetrackerCallback(void) {
-  robot.loadRing();
+  robot.hookConveyor->loadRing();
   Brain.Screen.print("Line switch Triggered");
   Brain.Screen.newLine();
 }
@@ -120,27 +120,19 @@ void autonomous(void) {
   // ..........................................................................
   // Insert autonomous user code here.
 
-  /*
-  drive.driveStraight(2, 5, 90);
-  robot.toggleMogoClamp();
+  bool match = true;
 
-  wait(500, msec);
+  //test();
 
-  robot.runIntake();
-  wait(700,msec);
-
-  robot.stopIntake();
-  wait(500, msec);
-
-  drive.gyroTurn(1, 180);
-  wait(500, msec);
-
-  drive.driveStraight(1, 90, 100);
-  */
+  if(match){
+    match24();
+  } else {
+    skills24();
+  }
   //drive.driveStraight(1, 45, 20);
 
-  robot.toggleMogoClamp();
-  robot.loadRing();
+  //robot.toggleMogoClamp();
+  //robot.loadRing();
   
 
   //linetracker.low(linetrackerCallback);
@@ -176,13 +168,27 @@ void usercontrol(void) {
     //checkGameElement.broadcastAndWait();
 
     int scale = 95;
-    double multiplier = 100/cbrt(scale);    
-    LNS = cbrt(Controller.Axis3.position())*multiplier;
-    LEW = cbrt(Controller.Axis4.position())*multiplier;
-    RNS = cbrt(Controller.Axis2.position())*multiplier;
-    REW = cbrt(Controller.Axis1.position())*multiplier;    
+    double multiplier = 100/cbrt(scale);
 
-    //robot.drive(LNS,LEW,RNS,REW);
+    if(Controller.ButtonR1.pressing()){
+      if(Controller.ButtonUp.pressing()){
+        robot.switchControlMode();
+      }
+    }
+
+    
+    if (Controller.Axis3.position() > 90){LNS = 90;}else{LNS = Controller.Axis3.position();}
+    if (Controller.Axis4.position() > 90){LEW = 90;}else{LEW = Controller.Axis4.position();}
+    if (Controller.Axis2.position() > 90){RNS = 90;}else{RNS = Controller.Axis2.position();}
+    if (Controller.Axis1.position() > 90){REW = 90;}else{REW = Controller.Axis1.position();}
+    
+
+    //LNS = cbrt(LNS)*multiplier;
+    //LEW = cbrt(LEW)*multiplier;
+    //RNS = cbrt(RNS)*multiplier;
+    //REW = cbrt(REW)*multiplier;    
+
+    robot.drive(LNS,LEW,RNS,REW);
 
     if(charge> CD){
       if(Controller.ButtonB.pressing()) {

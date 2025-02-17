@@ -10,6 +10,8 @@
 #ifndef AUTONS_H
 #define AUTONS_H
 
+extern double tileLength; //inches
+
 /**
  * @brief void containing autonomous test code
 */
@@ -20,9 +22,12 @@ void test();
 */
 void match();
 
+void match24();
 /**
  * @brief void containing autonomous skills code
 */
-void skills();
+void skills24();
+
+void skills15();
 
 #endif

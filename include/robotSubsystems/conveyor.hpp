@@ -12,9 +12,13 @@ using namespace vex;
 
 class conveyor{
     private:
-        const int restPos = 0;
-        const int loadedPos = 0;
         int currentPos;
+
+        int cycleLength;
+        int loadLength;
+
+        int highspeed = 100;
+        int lowspeed = 30;
         
         motor* driver;
     public:
@@ -26,6 +30,10 @@ class conveyor{
         void run(directionType dir);
 
         void stop();
+
+        void cycleRing();
+        
+        void resetCycle(int speedtype);
 
         void loadRing();
 };

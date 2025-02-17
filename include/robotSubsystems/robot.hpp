@@ -12,8 +12,9 @@ class Robot {
         driveTrain* driveT;
         clamp* mogoClamp;
         intake* frontIntake;
-        conveyor* hookConveyor;
     public:
+        conveyor* hookConveyor; // for less annoying control over hook mech
+
         /**
          * @brief creates a robot object to monitor, manage, and control the robots' systems
          * 
@@ -65,17 +66,17 @@ class Robot {
         /**
          * @brief
          */
+        void runPureIntake();
+
+        /**
+         * @brief
+         */
         void runReversedIntake();
 
         /**
          * @brief
          */
         void stopIntake();
-
-        /**
-         * @brief
-         */
-        void loadRing();
 
 };
 

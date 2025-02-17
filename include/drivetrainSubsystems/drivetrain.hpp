@@ -25,6 +25,9 @@ class driveTrain{
         double motorConversion;
         double deadzone = 5;
 
+        double leftpos;
+        double rightpos;
+
         // Classifications for User Control Modes
         enum UserControlMode {
             tankDrive,

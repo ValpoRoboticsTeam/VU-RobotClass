@@ -158,21 +158,35 @@ void driveTrain::driveStraight(int dir, double desiredPos, double velocity){
     while(!complete){
         switch (dir){
         case 1: // forward movement
-            leftSide->spin(forward, velocity, velocityUnits::pct);
-            rightSide->spin(forward, velocity, velocityUnits::pct);
+
+            double dif = (leftSide->getMotorVelocity() - rightSide->getMotorVelocity())*3;
+
+            double leftPower = velocity + dif;
+            double rightPower = velocity - dif;
+
+            leftSide->spin(forward, leftPower, velocityUnits::pct);
+            rightSide->spin(forward, rightPower, velocityUnits::pct);
+            ave = getMotorAve();
             break;
         case 2:
-            leftSide->spin(reverse, velocity, velocityUnits::pct);
-            rightSide->spin(reverse, velocity, velocityUnits::pct);
+
+            double dif = (leftSide->getMotorVelocity() - rightSide->getMotorVelocity())*3;
+
+            double leftPower = velocity + dif;
+            double rightPower = velocity - dif;
+
+
+            leftSide->spin(reverse, leftPower, velocityUnits::pct);
+            rightSide->spin(reverse, rightPower, velocityUnits::pct);
+            ave = -getMotorAve();
             break;
         default:            
             stopDriveTrain(hold);
             complete=true;
             break;
         }
-        ave = getMotorAve();
+        
         if (goal-errorOffset < ave && goal+errorOffset > ave ){
-                
                 complete = true;
         }
     }
@@ -432,6 +446,9 @@ void driveTrain::MogoRush() {
     resetDrivePositions();
     wait(20, msec);
 
+    double targetWidth = 49;
+    
+
     int errorcount = 0;
 
     double YMAX;
@@ -459,66 +476,43 @@ void driveTrain::MogoRush() {
 
 
     while (errorcount<3){
-        if (aivis.installed()) { // take snapshot for ai vision sensor
-            aivis.takeSnapshot(aivision::ALL_AIOBJS);
-        } else {
-            vis.takeSnapshot(MOGO); // take snapshot for older vision sensor
+        aivis.takeSnapshot(aivision::ALL_AIOBJS);
+        
+        double X = aivis.largestObject.centerX;
+        double Y = aivis.largestObject.width;
+
+        double speed = (Y-targetWidth)*(100/targetWidth);
+
+        if (X < (centerFOV - offsetX)) { //drift to the left
+            double drift = (centerFOV - X)/XMAX;
+            scaleR = 1 - drift;
+            scaleL = 1;
+
+        
+        } else if (X > (centerFOV + offsetX)) { // drift to the right
+            double drift = (X - centerFOV)/XMAX;
+            scaleR = 1;
+            scaleL = 1 - drift;
+        
+        } 
+
+        leftSpeed = speed*scaleL*0.4;
+        rightSpeed = speed*scaleR*0.4;
+
+        leftSide->spin(reverse, leftSpeed, velocityUnits::pct);
+        rightSide->spin(reverse, rightSpeed, velocityUnits::pct);
+        wait(30, msec);
+
+        if ((Y < targetWidth) && 
+            ((X >= (centerFOV - offsetX)) || 
+            (X <= (centerFOV + offsetX)))) {
+            errorcount++;
+            Brain.Screen.print(aivis.largestObject.width);
+            Brain.Screen.newLine();
+        
         }
 
-        if (vis.objectCount > 0){
-
-            double X; double Y;
-            if (aivis.installed()) { //mogo coordinates for ai vision sensor
-                aivision::object* mogo = findMogo();
-                X = mogo->centerX; 
-                Y = mogo->centerY;
-            } else { //mogo coordinates for older vision sensor
-                X = vis.largestObject.centerX;
-                Y = vis.largestObject.centerY;
-            }
-
-            Brain.Screen.clearScreen();
-            Brain.Screen.setCursor(1,1);
-            Brain.Screen.print("Mogo coors:");
-            Brain.Screen.newLine();
-            Brain.Screen.print("x: ");
-            Brain.Screen.print(X);
-            Brain.Screen.newLine();
-            Brain.Screen.print("y: ");
-            Brain.Screen.print(Y);
-
-            double speed = (Ytarget-Y)*(100/Ytarget);
-
-            if (X < (centerFOV - offsetX)) { //drift to the left
-                double drift = (centerFOV - X)/XMAX;
-                scaleR = 1;
-                scaleL = 1 - drift;
-
-            
-            } else if (X > (centerFOV + offsetX)) { // drift to the right
-                double drift = (X - centerFOV)/XMAX;
-                scaleR = 1;
-                scaleL = 1 - drift;
-            
-            } 
-
-            leftSpeed = speed*scaleL;
-            rightSpeed = speed*scaleR;
-
-            leftSide->spin(fwd, leftSpeed, velocityUnits::pct);
-            rightSide->spin(fwd, rightSpeed, velocityUnits::pct);
-            wait(30, msec);
-
-            if ((Y > Ytarget) && 
-                ((X >= (centerFOV - offsetX)) || 
-                (X <= (centerFOV + offsetX)))) {
-                errorcount++;
-            }
-
-        } else {
-            pointTurn(1, 20);
-            wait(30, msec);
-        }
+        //width = 49
     }
     stopDriveTrain(hold);
 }
@@ -542,9 +536,8 @@ int driveTrain::drive(double leftNS, double leftEW, double rightNS, double right
 
     } else{ //if all joystick values are outside the deadzone
         if(getControlMode() == tankDrive){
-
             if(((leftNS - rightNS) < 10) && ((leftNS - rightNS) > -10)) {
-                double dif = (leftSide->getMotorVelocity() - rightSide->getMotorVelocity())*0.5;
+                double dif = (leftSide->getMotorVelocity() - rightSide->getMotorVelocity())*2;
 
                 leftPower = (leftNS + leftEW) + dif;
                 rightPower = (rightNS - rightEW) - dif;
@@ -554,14 +547,21 @@ int driveTrain::drive(double leftNS, double leftEW, double rightNS, double right
             }
         } else if(getControlMode() == arcadeDrive) { 
             if (withinDeadzone(leftEW) && withinDeadzone(rightEW)) {
-                double dif = (leftSide->getMotorVelocity() - rightSide->getMotorVelocity())*0.5;
+                resetDrivePositions();
+                double dif = (leftSide->getMotorVelocity() - rightSide->getMotorVelocity())*3;
 
-                leftPower = leftNS + dif;
+                leftPower = leftNS;
                 rightPower = leftNS - dif;
             } else {
-                leftPower = leftNS + rightEW*0.70;
-                rightPower = leftNS - rightEW*0.70;
+                leftPower = leftNS + rightEW;
+                rightPower = leftNS - rightEW;
             }
+        }
+
+
+        if ((leftPower < 0) && (rightPower < 0)){
+            leftPower *= 0.5;
+            rightPower *= 0.5;
         }
 
         leftSide->spin(fwd, leftPower, velocityUnits::pct);
