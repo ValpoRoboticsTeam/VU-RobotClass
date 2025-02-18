@@ -93,6 +93,43 @@ driveTrain::~driveTrain(){}
 /*-----------------------Drivetrain Utility Functions------------------------*/
 /*---------------------------------------------------------------------------*/
 
+void driveTrain::autostraight(double input, double* leftspeedinput, double* rightspeedinput){
+    double dif = (leftSide->getMotorVelocity() - rightSide->getMotorVelocity());
+
+    double leftspeed = *leftspeedinput;
+    double rightspeed = *rightspeedinput;
+
+    if(input >=0) {
+        leftspeed = input - dif;
+        rightspeed = input + dif;
+
+        double max = 100;
+        if (leftspeed > max){max = leftspeed;}
+        if (rightspeed > max){max = rightspeed;}
+
+        if(max > 100){
+            leftspeed = leftspeed/max*100;
+            rightspeed = rightspeed/max*100;
+        }
+        
+    } else {
+        leftspeed = input - dif;
+        rightspeed = input + dif;
+
+        double max = -100;
+        if (leftspeed < max){max = leftspeed;}
+        if (rightspeed < max){max = rightspeed;}
+
+        if(max < -100){
+            leftspeed = leftspeed/max*-100;
+            rightspeed = rightspeed/max*-100;
+        }
+    }
+
+    *leftspeedinput = leftspeed;
+    *rightspeedinput = rightspeed;
+}
+
 
 double driveTrain::getMotorAve(){
     return (leftSide->getMotorAve()+
@@ -149,46 +186,24 @@ void driveTrain::sidePivot(int dir, double theta, double velocity){
     stopDriveTrain(hold);    
 }
 
-void driveTrain::driveStraight(int dir, double desiredPos, double velocity){
+void driveTrain::driveStraight(double velocity, double desiredPos){
 
     resetDrivePositions();
     bool complete = false; double ave; double errorOffset = 5; 
     double goal = desiredPos/motorConversion;
 
     double dif;
-    double leftPower;
-    double rightPower;
+    double leftPower = 0;
+    double rightPower = 0;
     
     while(!complete){
-        switch (dir){
-        case 1: // forward movement
 
-            dif = (leftSide->getMotorVelocity() - rightSide->getMotorVelocity())*3;
+        autostraight(velocity, &leftPower, &rightPower);
 
-            leftPower = velocity + dif;
-            rightPower = velocity - dif;
+        leftSide->spin(forward, leftPower, velocityUnits::pct);
+        rightSide->spin(forward, rightPower, velocityUnits::pct);
 
-            leftSide->spin(forward, leftPower, velocityUnits::pct);
-            rightSide->spin(forward, rightPower, velocityUnits::pct);
-            ave = getMotorAve();
-            break;
-        case 2:
-
-            dif = (leftSide->getMotorVelocity() - rightSide->getMotorVelocity())*3;
-
-            leftPower = velocity + dif;
-            rightPower = velocity - dif;
-
-
-            leftSide->spin(reverse, leftPower, velocityUnits::pct);
-            rightSide->spin(reverse, rightPower, velocityUnits::pct);
-            ave = -getMotorAve();
-            break;
-        default:            
-            stopDriveTrain(hold);
-            complete=true;
-            break;
-        }
+        ave = getMotorAve();
         
         if (goal-errorOffset < ave && goal+errorOffset > ave ){
                 complete = true;
@@ -551,41 +566,7 @@ int driveTrain::drive(double leftNS, double leftEW, double rightNS, double right
             }
         } else if(getControlMode() == arcadeDrive) { 
             if (withinDeadzone(leftEW) && withinDeadzone(rightEW)) {
-                resetDrivePositions();
-                double dif = (leftSide->getMotorVelocity() - rightSide->getMotorVelocity());
-
-
-                Brain.Screen.print(dif);
-                Brain.Screen.newLine();
-                
-
-                if(leftNS >=0) {
-                    leftPower = leftNS - dif;
-                    rightPower = leftNS + dif;
-
-                    double max = 100;
-                    if (leftPower > max){max = leftPower;}
-                    if (rightPower > max){max = rightPower;}
-
-                    if(max > 100){
-                        leftPower = leftPower/max*100;
-                        rightPower = rightPower/max*100;
-                    }
-                    
-                } else {
-                    leftPower = leftNS + dif;
-                    rightPower = leftNS - dif;
-
-                    double max = -100;
-                    if (leftPower < max){max = leftPower;}
-                    if (rightPower < max){max = rightPower;}
-
-                    if(max < -100){
-                        leftPower = leftPower/max*-100;
-                        rightPower = rightPower/max*-100;
-                    }
-                }
-                
+                autostraight(leftNS, &leftPower, &rightPower);  
             } else {
                 leftPower = leftNS + rightEW;
                 rightPower = leftNS - rightEW;

@@ -119,6 +119,11 @@ class driveTrain{
         /*---------------------------------------------------------------------------*/
 
         /**
+         * @brief
+         */
+        void autostraight(double input, double* leftspeedinput, double* rightspeedinput);
+        
+        /**
          * @brief gets an average position of all motors
         */
         double getMotorAve();
@@ -196,7 +201,7 @@ class driveTrain{
          * @param desiredPos
          * @param velocity
          */
-        void driveStraight(int dir, double desiredPos, double velocity);
+        void driveStraight(double velocity, double desiredPos);
 
         /**
          * @brief

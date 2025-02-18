@@ -120,15 +120,30 @@ void autonomous(void) {
   // ..........................................................................
   // Insert autonomous user code here.
 
+  bool testing = true;
+  bool bigbot = true;
   bool match = true;
 
   //test();
 
-  if(match){
-    match24();
-  } else {
-    skills24();
+  if(testing){
+    test();
+  } else{
+    if(bigbot){
+      if(match){
+        match24();
+      } else {
+        skills24();
+      }
+    } else {
+      if(match){
+        match15();
+      } else {
+        skills15();
+      }
+    }
   }
+  
   //drive.driveStraight(1, 45, 20);
 
   //robot.toggleMogoClamp();
