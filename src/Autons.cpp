@@ -18,22 +18,27 @@ void match15(){
 
 }
 
+void skills15(){
+
+}
+
 void match24(){
+  robot.hookConveyor->loadRing();
+
   robot.driveT->driveStraight(tileLength*sqrt(2), 5);
-
+  waitUntil(!robot.driveT->Moving());
   robot.toggleMogoClamp();
-  wait(500, msec);
+  wait(300, msec);
 
-  robot.runIntake();
-  wait(700,msec);
-
-  robot.stopIntake();
-  wait(500, msec);
+  robot.hookConveyor->resetCycle(1);
+  wait(300, msec);
 
   robot.driveT->gyroTurn(1, 180);
-  wait(500, msec);
+  waitUntil(!robot.driveT->Moving());
 
   robot.driveT->driveStraight(100, 90);
+  waitUntil(!robot.driveT->Moving());
+
 }
 
 //note 1 tile = 23.56 in
@@ -45,8 +50,7 @@ void skills24(){
     //drive straight & grab ring
     robot.runPureIntake();
     robot.driveT->driveStraight(30, tileLength/2);
-    
-    wait(1500, msec);
+    waitUntil(!robot.driveT->Moving());
     robot.stopIntake();
     
     // turn to grab other ring
@@ -57,6 +61,7 @@ void skills24(){
     // drive straight & grab ring
     robot.runPureIntake();
     robot.driveT->driveStraight(30, tileLength*sqrt(2));
+    waitUntil(!robot.driveT->Moving());
     robot.stopIntake();
     wait(1, sec);
 
@@ -66,7 +71,7 @@ void skills24(){
 
     //move backward & grab goal
     robot.driveT->driveStraight(-40, tileLength);
-    wait(500, msec);
+    waitUntil(!robot.driveT->Moving());
     robot.toggleMogoClamp();
     wait(500, msec);
 
@@ -81,27 +86,25 @@ void skills24(){
     // move to goal zone
     robot.runPureIntake();
     robot.driveT->driveStraight(50, tileLength);
+    waitUntil(!robot.driveT->Moving());
     robot.stopIntake();
     wait(1, sec);
 
     // back up
     robot.driveT->driveStraight(-40, tileLength*sqrt(2)/2);
-    wait(500, msec);
+    waitUntil(!robot.driveT->Moving());
 
     // turn around
     robot.driveT->gyroTurn(1, 180);
-    wait(500, msec);
+    waitUntil(!robot.driveT->Moving());
 
     // back into zone
     robot.driveT->driveStraight(-40, tileLength*sqrt(2)/2);
-    wait(300, msec);
+    waitUntil(!robot.driveT->Moving());
 
     // drop mogo & drive away
     robot.toggleMogoClamp();
     robot.driveT->driveStraight(70, tileLength*sqrt(2)/2);
-
-}
-
-void skills15(){
+    waitUntil(!robot.driveT->Moving());
 
 }

@@ -17,6 +17,8 @@ competition Competition;
 // define your global instances of motors and other devices here
 allianceColor matchColor;
 
+int CD = 25;
+
 /*---------------------------------------------------------------------------*/
 /*                          Pre-Autonomous Functions                         */
 /*                                                                           */
@@ -141,7 +143,7 @@ void autonomous(void) {
 /*  You must modify the code to add your own robot specific commands here.   */
 /*---------------------------------------------------------------------------*/
 
-int CD = 25;
+
 void usercontrol(void) {
   //checkGameElement(hasMogoCallback);
   linetracker.low(linetrackerCallback);
@@ -161,8 +163,8 @@ void usercontrol(void) {
   while(true){
     //checkGameElement.broadcastAndWait();
 
-    int scale = 95;
-    double multiplier = 100/cbrt(scale);
+    //int scale = 95;
+    //double multiplier = 100/cbrt(scale);
 
     if (Controller.Axis3.position() > speedLimit){LNS = speedLimit;}else{LNS = Controller.Axis3.position();}
     if (Controller.Axis4.position() > speedLimit){LEW = speedLimit;}else{LEW = Controller.Axis4.position();}

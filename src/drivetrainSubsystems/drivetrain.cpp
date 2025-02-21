@@ -41,6 +41,8 @@ driveTrain::driveTrain(
 
     leftSide = new twoWheelSide(FrontLeft, BackLeft, gearratio, wheelDiameter);
     rightSide = new twoWheelSide(FrontRight, BackRight, gearratio, wheelDiameter);    
+
+    isMoving = false;
 }
 
 driveTrain::driveTrain(
@@ -63,6 +65,8 @@ driveTrain::driveTrain(
 
     leftSide = new threeWheelSide(FrontLeft, MiddleLeft, BackLeft, gearratio, wheelDiameter);
     rightSide = new threeWheelSide(FrontRight, MiddleRight, BackRight, gearratio, wheelDiameter);    
+
+    isMoving = false;
 }
 
 driveTrain::driveTrain(
@@ -85,6 +89,8 @@ driveTrain::driveTrain(
 
     leftSide = new fourWheelSide(FrontLeft, FrontMiddleLeft, BackMiddleLeft, BackLeft, gearratio, wheelDiameter);
     rightSide = new fourWheelSide(FrontRight, FrontMiddleRight, BackMiddleRight, BackRight, gearratio, wheelDiameter);    
+
+    isMoving = false;
 }
 
 driveTrain::~driveTrain(){}
@@ -145,6 +151,7 @@ void driveTrain::resetDrivePositions(){
 void driveTrain::stopDriveTrain(brakeType Brake){
     leftSide->stopDriveSide(Brake);
     rightSide->stopDriveSide(Brake);
+    isMoving = false;
 }
 
 void driveTrain::setVelocities(double velocity, velocityUnits units){
@@ -157,8 +164,34 @@ void driveTrain::setVelocities(double velocity, velocityUnits units){
 /*----------------------------Drivetrain Movements---------------------------*/
 /*---------------------------------------------------------------------------*/
 
+void driveTrain::driveStraight(double velocity, double desiredPos){
+
+    resetDrivePositions();
+    isMoving = true;    bool complete = false; 
+    double ave;         double errorOffset = 5; 
+    double goal = desiredPos/motorConversion;
+
+    double leftPower = 0;
+    double rightPower = 0;
+    
+    while(!complete){
+        autostraight(velocity, &leftPower, &rightPower);
+
+        leftSide->spin(forward, leftPower, velocityUnits::pct);
+        rightSide->spin(forward, rightPower, velocityUnits::pct);
+        ave = getMotorAve();
+        
+        if (goal-errorOffset < ave && goal+errorOffset > ave ){
+                complete = true;
+        }
+    }
+
+    stopDriveTrain(hold);
+}
+
 void driveTrain::sidePivot(int dir, double theta, double velocity){
     resetDrivePositions();
+    isMoving = true;
     bool complete = false; sensors->resetHeading(); double errorOffset=4;
     double ave; double head; double goal = theta*MotorOffset/motorConversion;
     
@@ -186,35 +219,11 @@ void driveTrain::sidePivot(int dir, double theta, double velocity){
     stopDriveTrain(hold);    
 }
 
-void driveTrain::driveStraight(double velocity, double desiredPos){
 
-    resetDrivePositions();
-    bool complete = false; double ave; double errorOffset = 5; 
-    double goal = desiredPos/motorConversion;
-
-    double dif;
-    double leftPower = 0;
-    double rightPower = 0;
-    
-    while(!complete){
-
-        autostraight(velocity, &leftPower, &rightPower);
-
-        leftSide->spin(forward, leftPower, velocityUnits::pct);
-        rightSide->spin(forward, rightPower, velocityUnits::pct);
-
-        ave = getMotorAve();
-        
-        if (goal-errorOffset < ave && goal+errorOffset > ave ){
-                complete = true;
-        }
-    }
-
-    stopDriveTrain(hold);
-}
 
 void driveTrain::driveArc(int dir, double radius, double theta, double velocity){
     resetDrivePositions();
+    isMoving = true;
     bool complete = false; double ave; double head; double errorOffset = 4; double goal = (theta*radius)/motorConversion; 
     double leftspeed; double rightspeed; double leftRadius; double rightRadius;
     
@@ -257,6 +266,57 @@ void driveTrain::driveArc(int dir, double radius, double theta, double velocity)
 /*-------------------------------PID ALROGITHMS------------------------------*/
 /*---------------------------------------------------------------------------*/
 
+/*-----------------------------DRIVE STRAIGHT PID----------------------------*/
+
+void driveTrain::drivePD(double desiredPos){
+    // control variables
+    double kp = 0.35; // controls how fast the program's rise time 
+    double kd = 0.1; // controls how fast the program reacts to approaching the targes
+    double ka = 0.05; // controls how fast the program corrects drift
+
+
+    // status tracking variables
+    double goal = desiredPos/motorConversion;
+    double error; // desirec Value - sensor value
+    double prev_Error = 0; // Error of last loop ran
+    double derivative; // Error - prevError
+    double ang; // angle at which the bot has turned 
+    double progress;
+    double RightMotorSpeed; double LeftMotorSpeed;
+    int errorCount=0;
+
+    isMoving = true;
+    resetDrivePositions();
+    sensors->resetHeading();
+
+    while(errorCount<3){
+
+        progress = getMotorAve();
+        ang = sensors->getRotation();
+
+        error = goal-progress;
+
+        derivative = error - prev_Error;
+        LeftMotorSpeed = (error*kp) + (progress*kd) -(ang*ka);
+        RightMotorSpeed = (error*kp) + (progress*kd) +(ang*ka);
+
+
+        if (LeftMotorSpeed < 1 && LeftMotorSpeed > 0){LeftMotorSpeed=1;}
+        if (LeftMotorSpeed > -1 && LeftMotorSpeed < 0){LeftMotorSpeed=-1;}
+        if (RightMotorSpeed < 1 && RightMotorSpeed > 0){RightMotorSpeed=1;}
+        if (RightMotorSpeed > -1 && RightMotorSpeed < 0){RightMotorSpeed=-1;}
+
+
+        leftSide->spin(forward, LeftMotorSpeed, velocityUnits::pct);
+        rightSide->spin(forward, RightMotorSpeed, velocityUnits::pct);
+
+        prev_Error = error;
+        if(error<5 && error>-5){
+            errorCount++;
+        }
+    }
+    stopDriveTrain(hold);
+}
 
 /*--------------------------------DRIVE ARC PID------------------------------*/
 
@@ -324,57 +384,6 @@ void driveTrain::arcPD(double desiredPos, int dir, double radius, double theta){
     */
 }
 
-/*-----------------------------DRIVE STRAIGHT PID----------------------------*/
-
-
-void driveTrain::drivePD(double desiredPos){
-    // control variables
-    double kp = 0.35; // controls how fast the program's rise time 
-    double kd = 0.1; // controls how fast the program reacts to approaching the targes
-    double ka = 0.05; // controls how fast the program corrects drift
-
-
-    // status tracking variables
-    double goal = desiredPos/motorConversion;
-    double error; // desirec Value - sensor value
-    double prev_Error = 0; // Error of last loop ran
-    double derivative; // Error - prevError
-    double ang; // angle at which the bot has turned 
-    double progress;
-    double RightMotorSpeed; double LeftMotorSpeed;
-    int errorCount=0;
-
-    resetDrivePositions();
-    sensors->resetHeading();
-
-    while(errorCount<3){
-
-        progress = getMotorAve();
-        ang = sensors->getRotation();
-
-        error = goal-progress;
-
-        derivative = error - prev_Error;
-        LeftMotorSpeed = (error*kp) + (progress*kd) -(ang*ka);
-        RightMotorSpeed = (error*kp) + (progress*kd) +(ang*ka);
-
-
-        if (LeftMotorSpeed < 1 && LeftMotorSpeed > 0){LeftMotorSpeed=1;}
-        if (LeftMotorSpeed > -1 && LeftMotorSpeed < 0){LeftMotorSpeed=-1;}
-        if (RightMotorSpeed < 1 && RightMotorSpeed > 0){RightMotorSpeed=1;}
-        if (RightMotorSpeed > -1 && RightMotorSpeed < 0){RightMotorSpeed=-1;}
-
-
-        leftSide->spin(forward, LeftMotorSpeed, velocityUnits::pct);
-        rightSide->spin(forward, RightMotorSpeed, velocityUnits::pct);
-
-        prev_Error = error;
-        if(error<5 && error>-5){
-            errorCount++;
-        }
-    }
-    stopDriveTrain(hold);
-}
 /*-------------------------------GYRO TURN PID-------------------------------*/
 
 void driveTrain::pointTurn(int dir, double turnVelocity){
@@ -407,13 +416,16 @@ void driveTrain::gyroTurn(int dir, double desiredPos){
     resetDrivePositions();
     sensors->resetRotation();
 
+    isMoving = true;
+
     //initial punch so gyro goes in the correct direction
     //pointTurn(dir, 75);
     //wait(30, msec);
 
     while (errorCount<5){
         // calculate error
-        error = desiredPos - abs(sensors->getRotation());
+        error = desiredPos - std::abs(sensors->getRotation());
+        
 
         // calculate derivative
         derivative = error - prev_Error;
@@ -465,8 +477,8 @@ void driveTrain::MogoRush() {
     resetDrivePositions();
     wait(20, msec);
 
+    isMoving = true;
     double targetWidth = 49;
-    
 
     int errorcount = 0;
 
@@ -530,8 +542,6 @@ void driveTrain::MogoRush() {
             Brain.Screen.newLine();
         
         }
-
-        //width = 49
     }
     stopDriveTrain(hold);
 }

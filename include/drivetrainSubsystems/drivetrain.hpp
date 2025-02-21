@@ -27,6 +27,8 @@ class driveTrain{
         double leftpos;
         double rightpos;
 
+        bool isMoving;
+
         // Classifications for User Control Modes
         enum UserControlMode {
             tankDrive,
@@ -69,8 +71,8 @@ class driveTrain{
          * @param wheelDiameter
          */
         driveTrain(
-            motor* FrontLeft, motor* FrontRight,
-            motor* BackLeft, motor* BackRight,
+            motor* FrontLeft,   motor* FrontRight,
+            motor* BackLeft,    motor* BackRight,
             sensorUnit* senosrs,
             double robotlength,
             double gearratio,
@@ -85,9 +87,9 @@ class driveTrain{
          * @param wheelDiameter
          */
         driveTrain(
-            motor* FrontLeft, motor* FrontRight,
-            motor* MiddleLeft, motor* MiddleRight,
-            motor* BackLeft, motor* BackRight,
+            motor* FrontLeft,   motor* FrontRight,
+            motor* MiddleLeft,  motor* MiddleRight,
+            motor* BackLeft,    motor* BackRight,
             sensorUnit* senosrs,
             double robotlength,
             double gearratio,
@@ -102,10 +104,10 @@ class driveTrain{
          * @param wheelDiameter
          */
         driveTrain(
-            motor* FrontLeft, motor* FrontRight,
+            motor* FrontLeft,       motor* FrontRight,
             motor* FrontMiddleLeft, motor* FrontMiddleRight,
-            motor* BackMiddleLeft, motor* BackMiddleRight,
-            motor* BackLeft, motor* BackRight,
+            motor* BackMiddleLeft,  motor* BackMiddleRight,
+            motor* BackLeft,        motor* BackRight,
             sensorUnit* senosrs,
             double robotlength,
             double gearratio,
@@ -117,6 +119,11 @@ class driveTrain{
         /*---------------------------------------------------------------------------*/
         /*-----------------------Drivetrain Utility Functions------------------------*/
         /*---------------------------------------------------------------------------*/
+
+        /**
+         * @brief returns whether the drive train is currently moving autonamously or not
+         */
+        bool Moving(){return isMoving;}
 
         /**
          * @brief
