@@ -565,7 +565,7 @@ int driveTrain::drive(double leftNS, double leftEW, double rightNS, double right
                 rightPower = rightNS - rightEW;
             }
         } else if(getControlMode() == arcadeDrive) { 
-            if (withinDeadzone(leftEW) && withinDeadzone(rightEW)) {
+            if (withinDeadzone(rightEW)) {
                 autostraight(leftNS, &leftPower, &rightPower);  
             } else {
                 leftPower = leftNS + rightEW;

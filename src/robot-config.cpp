@@ -29,7 +29,7 @@ double wheelDiameter = 3.25; // in inches
 
 motor FLeft = motor(PORT15, ratio18_1, true);
 motor MLeft = motor(PORT16, ratio18_1, true);
-motor BLeft = motor(PORT18, ratio18_1, true);
+motor BLeft = motor(PORT17, ratio18_1, true);
 
 motor FRight = motor(PORT18, ratio18_1, false);
 motor MRight = motor(PORT19, ratio18_1, false);
@@ -46,19 +46,20 @@ driveTrain drive(
   &MLeft, &MRight,
   &BLeft, &BRight, 
   &driveSensors, 
-  robotLength, gearRatio, wheelDiameter);
+  robotLength, gearRatio, wheelDiameter
+);
 
-  digital_out MogoClamp = digital_out(Brain.ThreeWirePort.H);
-  clamp* MC = new clamp(&MogoClamp);
-  
-  
-  motor IntakeDriver = motor(PORT1, ratio18_1, true);
-  intake* i = new intake(&IntakeDriver 
-                         //&intakePiston
-                         );
+digital_out MogoClamp = digital_out(Brain.ThreeWirePort.H);
+clamp* MC = new clamp(&MogoClamp);
 
-  motor hookDriver = motor(PORT2, ratio18_1, true);
-  conveyor* c = new conveyor(&hookDriver);
+
+motor IntakeDriver = motor(PORT1, ratio18_1, true);
+intake* i = new intake(&IntakeDriver 
+                        //&intakePiston
+                        );
+
+motor hookDriver = motor(PORT2, ratio18_1, true);
+conveyor* c = new conveyor(&hookDriver);
   
 
 

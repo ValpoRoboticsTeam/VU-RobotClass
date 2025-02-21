@@ -18,7 +18,9 @@ class conveyor{
         int loadLength;
 
         int highspeed = 100;
-        int lowspeed = 30;
+        int lowspeed = 40;
+
+        bool isMoving = false;
         
         motor* driver;
     public:
@@ -36,6 +38,8 @@ class conveyor{
         void resetCycle(int speedtype);
 
         void loadRing();
+
+        bool Moving() {return isMoving;}
 };
 
 

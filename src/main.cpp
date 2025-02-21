@@ -7,28 +7,6 @@
 /*                                                                            */
 /*----------------------------------------------------------------------------*/
 
-// BROKEN STUFF 15X15 BOT  
-// PORTS 1, 14, 7,8 
-
-// ---- START VEXCODE CONFIGURED DEVICES ----
-// Robot Configuration:
-// [Name]               [Type]        [Port(s)]
-// Controller           controller             
-//
-// FL                   Motor         19        
-// BL                   Motor         10       
-// FR                   Motor         15        
-// BR                   Motor         17        
-// Gyro                 Gyroscope     21
-//         
-// pneumaticIntake      pneumatics    G
-// Intake               Motor         2
-//
-// CataLeft             Motor         6                
-// CataRight            Motor         3
-//
-// pneumaticWing        pneumatics    H
-// ---- END VEXCODE CONFIGURED DEVICES ----
 #include "vex.h"
 
 using namespace vex;
@@ -53,6 +31,10 @@ void linetrackerCallback(void) {
   robot.hookConveyor->loadRing();
   Brain.Screen.print("Line switch Triggered");
   Brain.Screen.newLine();
+}
+
+void ringScoreCallback(void){
+  robot.hookConveyor->resetCycle(0);
 }
 
 void setprogram(void) {  
@@ -94,10 +76,8 @@ void pre_auton(void) {
   // Initializing Robot Configuration. DO NOT REMOVE!
   vexcodeInit();
   //setprogram();
-  //robot.loadRing();
 
-  linetracker.low(linetrackerCallback);
-
+  //robot.hookConveyor->loadRing();
   if(Brain.SDcard.isInserted()){
     Brain.Screen.drawImageFromFile("Logo2.png",0,0);
   }
@@ -143,13 +123,9 @@ void autonomous(void) {
       }
     }
   }
-  
-  //drive.driveStraight(1, 45, 20);
 
   //robot.toggleMogoClamp();
   //robot.loadRing();
-  
-
   //linetracker.low(linetrackerCallback);
   
   // ..........................................................................
@@ -166,9 +142,10 @@ void autonomous(void) {
 /*---------------------------------------------------------------------------*/
 
 int CD = 25;
-
 void usercontrol(void) {
   //checkGameElement(hasMogoCallback);
+  linetracker.low(linetrackerCallback);
+  Controller.ButtonR1.released(ringScoreCallback);
   //coordinate StakeCoords;
   //StakeCoords.x=0;
   //StakeCoords.y=0;
@@ -177,6 +154,8 @@ void usercontrol(void) {
   //wallStake stake2(blueAlliance, StakeCoords);
 
   int charge = CD;
+  int speedLimit = 85;
+
   double LNS; double LEW;
   double RNS; double REW;
   while(true){
@@ -185,13 +164,6 @@ void usercontrol(void) {
     int scale = 95;
     double multiplier = 100/cbrt(scale);
 
-    if(Controller.ButtonR1.pressing()){
-      if(Controller.ButtonUp.pressing()){
-        robot.switchControlMode();
-      }
-    }
-
-    int speedLimit = 85;
     if (Controller.Axis3.position() > speedLimit){LNS = speedLimit;}else{LNS = Controller.Axis3.position();}
     if (Controller.Axis4.position() > speedLimit){LEW = speedLimit;}else{LEW = Controller.Axis4.position();}
     if (Controller.Axis2.position() > speedLimit){RNS = speedLimit;}else{RNS = Controller.Axis2.position();}
@@ -204,19 +176,27 @@ void usercontrol(void) {
 
     robot.drive(LNS,LEW,RNS,REW);
 
-    if(charge> CD){
-      if(Controller.ButtonB.pressing()) {
-        robot.toggleMogoClamp();
-        charge = 0;
+    if(Controller.ButtonR1.pressing()){
+      if(Controller.ButtonUp.pressing()){
+        robot.switchControlMode();
       }
-    }
-
-    if(Controller.ButtonL1.pressing()){
-      robot.runIntake();
-    } else if (Controller.ButtonL2.pressing()) {
-      robot.runReversedIntake();
     } else {
-      robot.stopIntake();
+      if(charge> CD){
+        if(Controller.ButtonB.pressing()) {
+          robot.toggleMogoClamp();
+          charge = 0;
+        }
+      }
+
+      if(Controller.ButtonL1.pressing()){
+        robot.runPureIntake();
+      } else if (Controller.ButtonL2.pressing()) {
+        robot.runReversedIntake();
+      } else {
+        robot.stopIntake();
+      }
+
+      
     }
 
     charge++;
