@@ -10,14 +10,14 @@
 #include "vex.h"
 using namespace vex;
 
-conveyor::conveyor(motor *hookDriver, double cycleLength, double loadLength) {
+conveyor::conveyor(motor *hookDriver, double cycle, double load) {
     driver = hookDriver;
     driver->resetPosition();
     driver->setVelocity(highspeed, velocityUnits::pct);
     driver->setBrake(brake);
 
-    cycleLength = 478;
-    loadLength = 180;
+    cycleLength = cycle;
+    loadLength = load;
 }
 
 conveyor::~conveyor(){}
