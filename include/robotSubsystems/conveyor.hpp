@@ -12,7 +12,7 @@ using namespace vex;
 
 class conveyor{
     private:
-        int currentPos;
+        //int currentPos;
 
         int cycleLength;
         int loadLength;
@@ -37,7 +37,7 @@ class conveyor{
         
         void resetCycle(int speedtype);
 
-        void loadRing();
+        void loadRing(void);
 
         bool Moving() {return isMoving;}
 };
