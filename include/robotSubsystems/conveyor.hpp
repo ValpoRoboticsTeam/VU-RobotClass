@@ -25,8 +25,11 @@ class conveyor{
         motor* driver;
     public:
         conveyor(
-            motor* hookDriver
+            motor* hookDriver,
+            double cycleLength,
+            double loadLength
         );
+        
         ~conveyor();
 
         void run(directionType dir);
