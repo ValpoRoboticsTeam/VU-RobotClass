@@ -26,8 +26,8 @@ class conveyor{
     public:
         conveyor(
             motor* hookDriver,
-            double cycleLength,
-            double loadLength
+            double cycle,
+            double load
         );
         
         ~conveyor();

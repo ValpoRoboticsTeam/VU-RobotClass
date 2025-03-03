@@ -57,8 +57,8 @@ intake* i = new intake(&IntakeDriver
                         //&intakePiston
                         );
 
-double cycleLength = 0;
-double loadlength = 0;                        
+double cycleLength = 478;
+double loadlength = 180;                        
 motor hookDriver = motor(PORT2, ratio18_1, true);
 conveyor* c = new conveyor(&hookDriver, cycleLength, loadlength);
 
