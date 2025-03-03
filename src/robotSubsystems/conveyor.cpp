@@ -10,7 +10,7 @@
 #include "vex.h"
 using namespace vex;
 
-conveyor::conveyor(motor *hookDriver) {
+conveyor::conveyor(motor *hookDriver, double cycleLength, double loadLength) {
     driver = hookDriver;
     driver->resetPosition();
     driver->setVelocity(highspeed, velocityUnits::pct);
