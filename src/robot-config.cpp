@@ -52,15 +52,15 @@ driveTrain drive(
 digital_out MogoClamp = digital_out(Brain.ThreeWirePort.H);
 clamp* MC = new clamp(&MogoClamp);
 
-
 motor IntakeDriver = motor(PORT1, ratio18_1, true);
 intake* i = new intake(&IntakeDriver 
                         //&intakePiston
                         );
 
+double cycleLength = 0;
+double loadlength = 0;                        
 motor hookDriver = motor(PORT2, ratio18_1, true);
-conveyor* c = new conveyor(&hookDriver);
-  
+conveyor* c = new conveyor(&hookDriver, cycleLength, loadlength);
 
 
 // 15" 
