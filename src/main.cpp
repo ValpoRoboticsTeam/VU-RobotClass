@@ -23,20 +23,46 @@ int CD = 25;
 /*                          Pre-Autonomous Functions                         */
 /*                                                                           */
 /*  You may want to perform some actions before the competition starts.      */
-/*  Do them in the following function.  You must return from this function   */
+/*  Do them in the following function.  You must return from this function   */  //8==D
 /*  or the autonomous and usercontrol tasks will not be started.  This       */
-/*  function is only called once after the V5 has been powered on and        */
+/*  function is only called once after the V5 has been powered on and        */ //penits
 /*  not every time that the robot is disabled.                               */
 /*---------------------------------------------------------------------------*/
 
-void linetrackerCallback(void) {
-  robot.hookConveyor->loadRing();
-  Brain.Screen.print("Line switch Triggered");
-  Brain.Screen.newLine();
+
+void resetHookCallback(void){
+  robot.hookConveyor->resetCycle(0);
 }
 
 void ringScoreCallback(void){
-  robot.hookConveyor->resetCycle(0);
+  robot.hookConveyor->resetCycle(1);
+}
+
+bool loaded = false; bool automated = true;
+void linetrackerCallback(void) {
+  Brain.Screen.print("Line switch Triggered");
+  Brain.Screen.newLine();
+
+  if(automated){
+    if (!loaded) { // hook is unloaded;
+      loaded = true;
+      robot.hookConveyor->loadRing();
+
+    } else { // hook is loaded and needs to be unloaded first
+      waitUntil(robot.hasMogo()); // needs mogo to be attatched first
+      wait(1, sec); // buffer time for mogo to settle
+      ringScoreCallback(); //score current loaded ring
+      loaded = false;
+      
+      linetrackerCallback(); // call function again to load new ring
+
+    }
+  }
+}
+
+void toggleAutomation(void) {
+  robot.toggle_HookManualOverride();
+  if(automated){automated = false;}else{automated = true;}
 }
 
 void setprogram(void) {  
@@ -147,7 +173,11 @@ void autonomous(void) {
 void usercontrol(void) {
   //checkGameElement(hasMogoCallback);
   linetracker.low(linetrackerCallback);
+  //Controller.ButtonL1.released(resetHookCallback);
+  //Controller.ButtonL2.released(resetHookCallback);
   Controller.ButtonR1.released(ringScoreCallback);
+  Controller.ButtonX.released(toggleAutomation);
+
   //coordinate StakeCoords;
   //StakeCoords.x=0;
   //StakeCoords.y=0;
@@ -176,9 +206,9 @@ void usercontrol(void) {
     //RNS = cbrt(RNS)*multiplier;
     //REW = cbrt(REW)*multiplier;    
 
-    robot.drive(LNS,LEW,RNS,REW);
+    //robot.drive(LNS,LEW,RNS,REW);
 
-    if(Controller.ButtonR1.pressing()){
+    if(Controller.ButtonR2.pressing()){
       if(Controller.ButtonUp.pressing()){
         robot.switchControlMode();
       }
@@ -191,13 +221,12 @@ void usercontrol(void) {
       }
 
       if(Controller.ButtonL1.pressing()){
-        robot.runPureIntake();
+        robot.runIntake();
       } else if (Controller.ButtonL2.pressing()) {
         robot.runReversedIntake();
       } else {
         robot.stopIntake();
       }
-
       
     }
 

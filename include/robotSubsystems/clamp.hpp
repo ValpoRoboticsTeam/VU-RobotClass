@@ -12,7 +12,7 @@ using namespace vex;
 
 class clamp {
     private:
-        bool clampState = true;
+        bool clampState;
         digital_out* MogoClamp;
 
     public:
@@ -23,6 +23,10 @@ class clamp {
          */
         clamp(digital_out* MC);
         ~clamp();
+
+        bool hasMogo(){
+            return !clampState;
+        }
 
         // Clamp functionality
         

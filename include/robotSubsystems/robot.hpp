@@ -9,7 +9,9 @@ class Robot {
     private:
         coordinate coords;
 
-        clamp* mogoClamp;        
+        clamp* mogoClamp;
+
+        bool hooks_ManualOverride = false;
     public:
         driveTrain* driveT;
         intake* frontIntake;
@@ -47,11 +49,17 @@ class Robot {
             driveT->switchControlMode();
         }
         
+        void toggle_HookManualOverride(){if(hooks_ManualOverride){hooks_ManualOverride=false;}else{hooks_ManualOverride=true;}}
+
         /**
          * @brief
          */
         int drive(double leftNS, double leftEW, double rightNS, double rightEW);
 
+
+        bool hasMogo(){
+            return mogoClamp->hasMogo();
+        }
 
         /**
          * @brief

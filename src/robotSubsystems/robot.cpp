@@ -40,7 +40,9 @@ void Robot::toggleMogoClamp() {
 
 void Robot::runIntake() {
     frontIntake->run(fwd);
-    hookConveyor->run(fwd);
+    if(hooks_ManualOverride){
+        hookConveyor->run(fwd);
+    }
 }
 
 void Robot::runPureIntake() {
@@ -49,7 +51,9 @@ void Robot::runPureIntake() {
 
 void Robot::runReversedIntake() {
     frontIntake->run(reverse);
-    hookConveyor->run(reverse);
+    if(hooks_ManualOverride){
+        hookConveyor->run(reverse);
+    } 
 }
 
 void Robot::stopIntake() {
