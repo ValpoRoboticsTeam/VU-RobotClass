@@ -100,7 +100,7 @@ driveTrain::~driveTrain(){}
 /*---------------------------------------------------------------------------*/
 
 void driveTrain::autostraight(double input, double* leftspeedinput, double* rightspeedinput){
-    double dif = (leftSide->getMotorVelocity() - rightSide->getMotorVelocity());
+    double dif = (leftSide->getMotorVelocity() - rightSide->getMotorVelocity())*0.5;
 
     double leftspeed = *leftspeedinput;
     double rightspeed = *rightspeedinput;

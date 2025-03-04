@@ -206,7 +206,7 @@ void usercontrol(void) {
     //RNS = cbrt(RNS)*multiplier;
     //REW = cbrt(REW)*multiplier;    
 
-    //robot.drive(LNS,LEW,RNS,REW);
+    robot.drive(LNS,LEW,RNS,REW);
 
     if(Controller.ButtonR2.pressing()){
       if(Controller.ButtonUp.pressing()){
