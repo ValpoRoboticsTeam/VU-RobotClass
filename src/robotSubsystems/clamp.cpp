@@ -21,12 +21,12 @@ clamp::~clamp(){}
 // Clamp functionality
 
 void clamp::open() {
-    MogoClamp->set(true);
+    MogoClamp->set(false);
     clampState = true;
 }
 
 void clamp::close() {
-    MogoClamp->set(false);
+    MogoClamp->set(true);
     clampState = false;
 }
 

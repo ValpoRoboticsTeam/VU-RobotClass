@@ -29,35 +29,43 @@ int CD = 25;
 /*  not every time that the robot is disabled.                               */
 /*---------------------------------------------------------------------------*/
 
-
+bool automated = true; bool loaded = false; 
 void resetHookCallback(void){
   robot.hookConveyor->resetCycle(0);
 }
 
 void ringScoreCallback(void){
   robot.hookConveyor->resetCycle(1);
+  loaded = false;
 }
 
-bool loaded = false; bool automated = true;
 void linetrackerCallback(void) {
   Brain.Screen.print("Line switch Triggered");
   Brain.Screen.newLine();
 
-  if(automated){
-    if (!loaded) { // hook is unloaded;
-      loaded = true;
-      robot.hookConveyor->loadRing();
+  if (!loaded) { // hook is unloaded;
+    loaded = true;
+    robot.hookConveyor->loadRing();
 
-    } else { // hook is loaded and needs to be unloaded first
+  } else { // hook is loaded and needs to be unloaded first
+
+    if(automated){
       waitUntil(robot.hasMogo()); // needs mogo to be attatched first
       wait(1, sec); // buffer time for mogo to settle
-      ringScoreCallback(); //score current loaded ring
+      robot.hookConveyor->resetCycle(1); //score current loaded ring
+      loaded = false;
+
+    } else {
+      waitUntil(robot.hookConveyor->Moving());
+      waitUntil(!robot.hookConveyor->Moving());
       loaded = false;
       
-      linetrackerCallback(); // call function again to load new ring
-
     }
+    
+    linetrackerCallback(); // call function again to load new ring
+
   }
+  
 }
 
 void toggleAutomation(void) {
@@ -128,9 +136,9 @@ void autonomous(void) {
   // ..........................................................................
   // Insert autonomous user code here.
 
-  bool testing = true;
+  bool testing = false;
   bool bigbot = true;
-  bool match = true;
+  bool match = false;
 
   //test();
 
@@ -173,9 +181,9 @@ void autonomous(void) {
 void usercontrol(void) {
   //checkGameElement(hasMogoCallback);
   linetracker.low(linetrackerCallback);
-  //Controller.ButtonL1.released(resetHookCallback);
+  Controller.ButtonL1.released(resetHookCallback);
   //Controller.ButtonL2.released(resetHookCallback);
-  Controller.ButtonR1.released(ringScoreCallback);
+  //Controller.ButtonR1.released(ringScoreCallback);
   Controller.ButtonX.released(toggleAutomation);
 
   //coordinate StakeCoords;
@@ -206,26 +214,34 @@ void usercontrol(void) {
     //RNS = cbrt(RNS)*multiplier;
     //REW = cbrt(REW)*multiplier;    
 
-    //robot.drive(LNS,LEW,RNS,REW);
+    robot.drive(LNS,LEW,RNS,REW);
 
-    if(Controller.ButtonR2.pressing()){
-      if(Controller.ButtonUp.pressing()){
+    if(Controller.ButtonUp.pressing()){
+      if(Controller.ButtonA.pressing()){
         robot.switchControlMode();
       }
     } else {
       if(charge> CD){
-        if(Controller.ButtonB.pressing()) {
+        if(Controller.ButtonL2.pressing()) {
           robot.toggleMogoClamp();
           charge = 0;
         }
       }
 
-      if(Controller.ButtonL1.pressing()){
+      if(Controller.ButtonR1.pressing()){
         robot.runIntake();
-      } else if (Controller.ButtonL2.pressing()) {
+      } else if (Controller.ButtonR2.pressing()) {
         robot.runReversedIntake();
       } else {
         robot.stopIntake();
+      }
+
+      if(Controller.ButtonL1.pressing()) {
+        robot.runHooks();
+      } else if(Controller.ButtonA.pressing()){
+        robot.runReversedHooks();
+      }else {
+        robot.stopHooks();
       }
       
     }

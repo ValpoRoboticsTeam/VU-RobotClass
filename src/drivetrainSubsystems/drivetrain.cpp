@@ -105,10 +105,10 @@ void driveTrain::autostraight(double input, double* leftspeedinput, double* righ
     double leftspeed = *leftspeedinput;
     double rightspeed = *rightspeedinput;
 
-    if(input >=0) {
-        leftspeed = input - dif;
-        rightspeed = input + dif;
+    leftspeed = input - dif;
+    rightspeed = input + dif;
 
+    if(input >=0) {
         double max = 100;
         if (leftspeed > max){max = leftspeed;}
         if (rightspeed > max){max = rightspeed;}
@@ -119,9 +119,6 @@ void driveTrain::autostraight(double input, double* leftspeedinput, double* righ
         }
         
     } else {
-        leftspeed = input - dif;
-        rightspeed = input + dif;
-
         double max = -100;
         if (leftspeed < max){max = leftspeed;}
         if (rightspeed < max){max = rightspeed;}
@@ -136,6 +133,25 @@ void driveTrain::autostraight(double input, double* leftspeedinput, double* righ
     *rightspeedinput = rightspeed;
 }
 
+void driveTrain::normalizeDriveSpeeds(double input, double* leftspeedinput, double* rightspeedinput){
+    
+    double leftspeed = *leftspeedinput;
+    double rightspeed = *rightspeedinput;
+
+    int limit = 100;                            // definition of max velocity
+    int max = limit;                            // creation of limit
+    if(input<0){leftspeed*=-1;rightspeed*=-1;}  // turn reverse velocity into fwd velocity for normalization
+
+    if(leftspeed>=max){max=leftspeed;}          // determine the local maximum of which input is going over the max
+    if(rightspeed>=max){max=rightspeed;}
+
+    leftspeed = leftspeed/max*limit;        // scale all speeds to the local maximum
+    rightspeed = rightspeed/max*limit;
+
+    if(input<0){leftspeed*=-1;rightspeed*=-1;} // fwd velocity turns back into reverse velocity if needed.
+
+    
+}
 
 double driveTrain::getMotorAve(){
     return (leftSide->getMotorAve()+
@@ -218,8 +234,6 @@ void driveTrain::sidePivot(int dir, double theta, double velocity){
     }
     stopDriveTrain(hold);    
 }
-
-
 
 void driveTrain::driveArc(int dir, double radius, double theta, double velocity){
     resetDrivePositions();
@@ -422,10 +436,12 @@ void driveTrain::gyroTurn(int dir, double desiredPos){
     //pointTurn(dir, 75);
     //wait(30, msec);
 
+    double maxErr = desiredPos - std::abs(sensors->getRotation());
+    
+
     while (errorCount<5){
         // calculate error
-        error = desiredPos - std::abs(sensors->getRotation());
-        
+        error = (desiredPos-std::abs(sensors->getRotation()))/maxErr*25;
 
         // calculate derivative
         derivative = error - prev_Error;
@@ -580,13 +596,31 @@ int driveTrain::drive(double leftNS, double leftEW, double rightNS, double right
             } else {
                 leftPower = leftNS + rightEW;
                 rightPower = leftNS - rightEW;
+
+
+                int limit = 100;
+                int max = limit;
+                if(leftNS<0){leftPower*=-1;rightPower*=-1;}
+
+                if(leftPower>=max){max=leftPower;}
+                if(rightPower>=max){max=rightPower;}
+
+                if(max>= limit){
+                    leftPower = leftPower/max*limit;
+                    rightPower = rightPower/max*limit;
+                } else {
+                    leftPower = leftNS + rightEW*0.5;
+                    rightPower = leftNS - rightEW*0.5;
+                }
+
+                if(leftNS<0){leftPower*=-1;rightPower*=-1;}
             }
         }
 
 
         if ((leftPower < 0) && (rightPower < 0)){
-            leftPower *= 0.5;
-            rightPower *= 0.5;
+            leftPower *= 0.85;
+            rightPower *= 0.85;
         }
 
         leftSide->spin(fwd, leftPower, velocityUnits::pct);

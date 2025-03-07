@@ -129,6 +129,11 @@ class driveTrain{
          * @brief
          */
         void autostraight(double input, double* leftspeedinput, double* rightspeedinput);
+
+        /**
+         * @brief
+         */
+        void normalizeDriveSpeeds(double input, double* leftspeedinput, double* rightspeedinput);
         
         /**
          * @brief gets an average position of all motors
@@ -160,6 +165,9 @@ class driveTrain{
         double getHeading(int dir){
             return sensors->getHeading(dir);
         }
+
+
+        
 
         /*---------------------------------------------------------------------------*/
         /*-------------------------------PID ALROGITHMS------------------------------*/

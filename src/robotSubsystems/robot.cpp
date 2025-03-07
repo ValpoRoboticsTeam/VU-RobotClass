@@ -40,23 +40,24 @@ void Robot::toggleMogoClamp() {
 
 void Robot::runIntake() {
     frontIntake->run(fwd);
-    if(hooks_ManualOverride){
-        hookConveyor->run(fwd);
-    }
-}
-
-void Robot::runPureIntake() {
-    frontIntake->run(fwd);
 }
 
 void Robot::runReversedIntake() {
     frontIntake->run(reverse);
-    if(hooks_ManualOverride){
-        hookConveyor->run(reverse);
-    } 
 }
 
 void Robot::stopIntake() {
     frontIntake->stop();
+}
+
+void Robot::runHooks() {
+    hookConveyor->run(fwd);
+}
+
+void Robot::runReversedHooks() {
+    hookConveyor->run(reverse);
+}
+
+void Robot::stopHooks() {
     hookConveyor->stop();
 }

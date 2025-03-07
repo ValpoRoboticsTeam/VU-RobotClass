@@ -70,12 +70,7 @@ class Robot {
          * @brief
          */
         void runIntake();
-
-        /**
-         * @brief
-         */
-        void runPureIntake();
-
+        
         /**
          * @brief
          */
@@ -85,6 +80,16 @@ class Robot {
          * @brief
          */
         void stopIntake();
+
+
+        void runHooks();
+
+        /**
+         * @brief
+         */
+        void runReversedHooks();
+
+        void stopHooks();
 
 };
 

@@ -21,12 +21,23 @@ intake::intake(
 
 intake::~intake(){}
 
+double intake::getVelocity(){
+    return driver->velocity(velocityUnits::pct);
+}
+
 void intake::extend() {
     //actuator->set(true);
 }
 
 void intake::retract() {
     //actuator->set(false);
+}
+
+void intake::unJam(){
+    stop();
+    driver->spinFor(reverse, 300, msec);
+    waitUntil(driver->isDone());
+    wait(100, msec);
 }
 
 void intake::setVelocity(double velocity, velocityUnits units) {

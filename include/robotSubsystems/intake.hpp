@@ -14,6 +14,7 @@ class intake {
     private:
         //front intake
         motor* driver;
+        int runVelocity = 100;
         //digital_out* actuator;
 
         //motor* ringConveyorBelt;
@@ -31,6 +32,8 @@ class intake {
         );
         ~intake();
 
+        double getVelocity();
+
         /**
          * @brief
          */
@@ -40,6 +43,11 @@ class intake {
          * @brief
          */
         void retract();
+
+        /**
+         * @brief
+         */
+        void unJam();
 
         /**
          * @brief
