@@ -15,6 +15,7 @@ conveyor::conveyor(motor *hookDriver, double cycle, double load) {
     driver->resetPosition();
     driver->setVelocity(highspeed, velocityUnits::pct);
     driver->setBrake(brake);
+    driver->setTimeout(700, msec);
 
     cycleLength = cycle;
     loadLength = load;
@@ -23,7 +24,13 @@ conveyor::conveyor(motor *hookDriver, double cycle, double load) {
 conveyor::~conveyor(){}
 
 void conveyor::run(directionType dir) {
-    if(!Moving()){
+
+    if(Moving() && (dir== reverse)){
+        isMoving = false;
+        stop();
+        run(dir);
+
+    } else if(!Moving()){
         driver->setVelocity(highspeed, velocityUnits::pct);
         driver->spin(dir);
     }
@@ -44,7 +51,7 @@ void conveyor::cycleRing() {
     isMoving = true;
     
     driver->spinFor(fwd, cycleLength, rotationUnits::deg, true);
-    waitUntil(driver->isDone());
+    waitUntil((driver->isDone()) || (!Moving()));
     isMoving = false;
 }
 
@@ -61,8 +68,8 @@ void conveyor::resetCycle(int speedtype) {
     
     isMoving = true;
     driver->spinFor(fwd, remainder, rotationUnits::deg, true);
-    waitUntil(driver->isDone());
-    isMoving = false;    
+    waitUntil((driver->isDone()) || (!Moving()));
+    isMoving = false;
 }
 
 void conveyor::loadRing(void) {
@@ -70,6 +77,6 @@ void conveyor::loadRing(void) {
 
     isMoving = true;
     driver->spinFor(fwd, loadLength, rotationUnits::deg, true);
-    waitUntil(driver->isDone());
+    waitUntil((driver->isDone()) || (!Moving()));
     isMoving = false;
 }
