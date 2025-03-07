@@ -182,6 +182,7 @@ void usercontrol(void) {
   //checkGameElement(hasMogoCallback);
   linetracker.low(linetrackerCallback);
   Controller.ButtonL1.released(resetHookCallback);
+  Controller.ButtonA.released(resetHookCallback);
   //Controller.ButtonL2.released(resetHookCallback);
   //Controller.ButtonR1.released(ringScoreCallback);
   Controller.ButtonX.released(toggleAutomation);
