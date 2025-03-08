@@ -158,6 +158,10 @@ class driveTrain{
         */
         void setVelocities(double velocity, velocityUnits units);
 
+        double getVelocities() {
+            return (leftSide->getMotorVelocity()+rightSide->getMotorVelocity() )/2;
+        }
+
         /**
          * @brief gets the current heading of the robot
          * @param dir specifies whether the robot is looking left or right

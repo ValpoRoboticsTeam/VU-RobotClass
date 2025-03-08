@@ -417,7 +417,7 @@ void driveTrain::pointTurn(int dir, double turnVelocity){
 }
 
 void driveTrain::gyroTurn(int dir, double desiredPos){
-    double kp = 0.6; // controls how fast the program's rise time 
+    double kp = 0.57; // controls how fast the program's rise time 
     double kd = 0.05; // controls how fast the program reacts to approaching the targes
 
 
@@ -441,7 +441,7 @@ void driveTrain::gyroTurn(int dir, double desiredPos){
 
     while (errorCount<5){
         // calculate error
-        error = (desiredPos-std::abs(sensors->getRotation()))/maxErr*25;
+        error = (desiredPos-std::abs(sensors->getRotation()))/maxErr*45;
 
         // calculate derivative
         derivative = error - prev_Error;

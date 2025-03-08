@@ -96,12 +96,11 @@ void skills24(){
     robot.driveT->sensors->resetRotation();
     robot.driveT->resetDrivePositions();
 
-    thread intakeThread = thread(runIntake);
-    
     //drive straight & grab ring
-    intakeOn = true; // 
-    robot.driveT->driveStraight(30, tileLength/2);
+    robot.frontIntake->run(fwd);
+    robot.driveT->driveStraight(30, 10);
     waitUntil(!robot.driveT->Moving());
+    wait(100, msec);
     
     // turn to grab other ring
     robot.driveT->gyroTurn(1, 45);
@@ -109,54 +108,100 @@ void skills24(){
     if(!skillsloaded){
       skillsLinetrackerCallback();
     }
-    wait(1, sec);
+    wait(300, msec);
 
     // drive straight & grab ring
     robot.driveT->driveStraight(30, tileLength*sqrt(2));
     waitUntil(!robot.driveT->Moving());
-    wait(1, sec);
-    intakeOn = false;
+    wait(300, msec);
+    
 
     // line up to grab mobile goal
     robot.driveT->gyroTurn(1, 45);
-    wait(1, sec);
+    waitUntil(!robot.driveT->Moving());
 
     //move backward & grab goal
     robot.driveT->driveStraight(-40, tileLength);
     waitUntil(!robot.driveT->Moving());
-    wait(500, msec);
+    wait(300, msec);
     robot.toggleMogoClamp();
+    robot.driveT->gyroTurn(2, 60);
+    robot.hookConveyor->resetCycle(1);
+    robot.hookConveyor->resetCycle(1);
+    robot.frontIntake->stop();
+
+    // line up to score goal
+    waitUntil(!robot.driveT->Moving());
+    robot.frontIntake->stop();
     wait(500, msec);
 
-    intakeOn = true;
-    // line up to score goal
-    robot.driveT->gyroTurn(2, 60);
+    robot.driveT->sensors->resetRotation();
+    robot.toggleMogoClamp();
+    // move to goal zone
+    robot.driveT->driveStraight(-50, sqrt(pow(tileLength,2)+pow(2*tileLength, 2)));
+    waitUntil((!robot.driveT->Moving()) || (robot.driveT->getVelocities() > -10));
+    wait(200, msec);
+
+    double heading = robot.driveT->sensors->getRotation();
+    if(heading<0){
+      robot.driveT->gyroTurn(2, -heading);      
+    } else{
+      robot.driveT->gyroTurn(1, heading);      
+    }
     waitUntil(!robot.driveT->Moving());
-    wait(500, msec);
+
+    robot.driveT->driveStraight(70, 27);
+    waitUntil(!robot.driveT->Moving());
+    wait(200, msec);
+
+    //robot.hookConveyor->resetCycle(1);
+    //robot.hookConveyor->loadRing();
+
+    
+    robot.driveT->gyroTurn(2, 15);
+    waitUntil(!robot.driveT->Moving());   
+    wait(200, msec);
+
+    
+    robot.frontIntake->run(fwd);
+    robot.driveT->driveStraight(50, tileLength*2.5);
+    waitUntil(!robot.driveT->Moving());
+    robot.frontIntake->stop();
+    wait(200, msec);
+
+    /*
+    robot.driveT->gyroTurn(2, 90);
+    waitUntil(!robot.driveT->Moving());
+    robot.frontIntake->stop();
+
+    robot.driveT->driveStraight(-50, tileLength);
+    waitUntil(!robot.driveT->Moving());
+    robot.toggleMogoClamp();
+    wait(200, msec);
+
+    robot.frontIntake->run(fwd);
+    robot.driveT->driveStraight(50, tileLength);
+    robot.hookConveyor->resetCycle(1);
+    robot.hookConveyor->resetCycle(1);
+    waitUntil(!robot.driveT->Moving());
+
+    robot.driveT->gyroTurn(2, 120);
+    waitUntil(!robot.driveT->Moving());
+    wait(300, msec);
+    robot.toggleMogoClamp();
 
     // move to goal zone
     robot.driveT->driveStraight(-50, sqrt(pow(tileLength,2)+pow(2*tileLength, 2)));
+    waitUntil((!robot.driveT->Moving()) || (robot.driveT->getVelocities() > -5));
+    wait(200, msec);
+    robot.frontIntake->stop();
+  
+    robot.driveT->driveStraight(70, tileLength*sqrt(2));
     waitUntil(!robot.driveT->Moving());
-    wait(1, sec);
-    intakeOn = false;
+    wait(200, msec);
 
     /*
-    // back up
-    robot.driveT->driveStraight(-40, tileLength*sqrt(2)/2);
-    waitUntil(!robot.driveT->Moving());
 
-    // turn around
-    robot.driveT->gyroTurn(1, 180);
-    waitUntil(!robot.driveT->Moving());
-
-    // back into zone
-    robot.driveT->driveStraight(-40, tileLength*sqrt(2)/2);
-    waitUntil(!robot.driveT->Moving());
-
-    // drop mogo & drive away
-    robot.toggleMogoClamp();
-    robot.driveT->driveStraight(70, tileLength*sqrt(2)/2);
-    waitUntil(!robot.driveT->Moving());
     
     */
 }
