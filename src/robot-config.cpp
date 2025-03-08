@@ -64,6 +64,9 @@ double loadLength = 0;
 motor hookDriver = motor(PORT16, ratio18_1, true);
 conveyor* c = new conveyor(&hookDriver, cycleLength, loadLength);
 
+motor LHang = motor(PORT16, ratio36_1, true);
+motor RHang = motor(PORT18, ratio36_1, false);
+
 
 digital_in linetracker = digital_in(Brain.ThreeWirePort.G);
 

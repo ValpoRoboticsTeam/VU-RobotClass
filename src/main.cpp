@@ -228,6 +228,19 @@ void usercontrol(void) {
         robot.stopIntake();
       }
       
+      if(Controller.ButtonUp.pressing()) {
+          LHang.spin(fwd, 75, velocityUnits::pct);
+          RHang.spin(fwd, 75, velocityUnits::pct);
+
+      } else if(Controller.ButtonDown.pressing()) {
+          LHang.spin(reverse, 75, velocityUnits::pct);
+          RHang.spin(reverse, 75, velocityUnits::pct);
+
+      } else {
+        LHang.stop(hold);
+        RHang.stop(hold);
+      }
+
     }
 
     charge++;

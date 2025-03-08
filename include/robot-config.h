@@ -19,6 +19,9 @@ extern sensorUnit driveSensors;
 //extern inertial gyroscope;
 extern digital_in linetracker;
 
+extern motor LHang;
+extern motor RHang;
+
 extern aivision aivis;
 
 extern signature MOGO;
