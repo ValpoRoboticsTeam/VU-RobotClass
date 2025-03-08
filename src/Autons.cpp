@@ -11,7 +11,7 @@
 double tileLength = 23.56; //inches
 
 void test(){
-  robot.driveT->driveStraight(40, tileLength);
+  //robot.driveT->driveStraight(40, tileLength);
 }
 
 void match15(){
@@ -19,6 +19,43 @@ void match15(){
 }
 
 void skills15(){
+
+  robot.driveT->driveStraight(50, 18);
+  waitUntil(!robot.driveT->Moving());
+  robot.driveT->stopDriveTrain(hold);
+
+  
+  robot.driveT->gyroTurn(1, 135);
+  waitUntil(!robot.driveT->Moving());
+
+  robot.driveT->driveStraight(35, 35);
+  waitUntil(!robot.driveT->Moving());
+
+  robot.driveT->gyroTurn(1, 16);
+  waitUntil(!robot.driveT->Moving());
+
+  robot.driveT->driveStraight(50, 10.75);
+  waitUntil(!robot.driveT->Moving());
+
+  robot.driveT->driveStraight(-50, 10.75);
+  waitUntil(!robot.driveT->Moving());
+
+  robot.driveT->gyroTurn(2, 45);
+  waitUntil(!robot.driveT->Moving());
+
+  robot.driveT->driveStraight(-50, 28);
+  waitUntil(!robot.driveT->Moving());
+
+  robot.driveT->gyroTurn(2, 45);
+  waitUntil(!robot.driveT->Moving());
+
+  robot.driveT->driveStraight(60, 37.5);
+  waitUntil(!robot.driveT->Moving());
+
+  robot.driveT->driveStraight(-30, tileLength);
+  waitUntil(!robot.driveT->Moving());
+
+  
 
 }
 

@@ -128,9 +128,9 @@ void autonomous(void) {
   // ..........................................................................
   // Insert autonomous user code here.
 
-  bool testing = true;
-  bool bigbot = true;
-  bool match = true;
+  bool testing = false;
+  bool bigbot = false;
+  bool match = false;
 
   //test();
 
