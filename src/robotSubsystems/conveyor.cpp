@@ -15,7 +15,7 @@ conveyor::conveyor(motor *hookDriver, double cycle, double load) {
     driver->resetPosition();
     driver->setVelocity(highspeed, velocityUnits::pct);
     driver->setBrake(brake);
-    driver->setTimeout(700, msec);
+    //driver->setTimeout(700, msec);
 
     cycleLength = cycle;
     loadLength = load;
