@@ -1,7 +1,7 @@
 
 #ifndef ROBOT_HPP
 #define ROBOT_HPP
-#include "structures.hpp"
+#include "../structures.hpp"
 using namespace vex;
 
 
